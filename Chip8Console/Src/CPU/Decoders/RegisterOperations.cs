@@ -7,13 +7,12 @@ namespace Chip8Console.CPU
         public RegisterOperations(ICPU cpu) : base(cpu)
         {
             opcodeDecoders = new OpcodeDecoder[] {
-                new SetIRegister(cpu),
                 new AddVyToVx(cpu),
                 new SubtractVyToVx(cpu)
             };
         }
 
-        public override ushort FilterOpcode => 0x8000;
+        public override ushort FilterNibble => 0x8000;
 
         public override void Execute(ushort opcode)
         {
@@ -21,7 +20,7 @@ namespace Chip8Console.CPU
 
             foreach (var decoder in opcodeDecoders)
             {
-                if (decoder.FilterOpcode != subopcode) continue;
+                if (decoder.FilterNibble != subopcode) continue;
                 decoder.Execute(opcode);
                 break;
             }

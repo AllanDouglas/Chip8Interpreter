@@ -11,8 +11,8 @@ namespace Chip8ConsoleTest
         [Fact]
         public void ADD_Vx_To_Vy()
         {
-            var cpu = new Chip8CPU(new RAM(4096), null);
-            var addVyToVx = new AddVyToVx(cpu);
+            ICPU cpu = new Chip8CPU(new RAM(4096), null);
+            OpcodeDecoder addVyToVx = new AddVyToVx(cpu);
 
             cpu.StoreIntoRegister(3, 0x1);
             cpu.StoreIntoRegister(7, 0x1);
@@ -24,8 +24,8 @@ namespace Chip8ConsoleTest
         [Fact]
         public void ADD_Vx_To_Vy_With_Carry_1()
         {
-            var cpu = new Chip8CPU(new RAM(4096), null);
-            var addVyToVx = new AddVyToVx(cpu);
+            ICPU cpu = new Chip8CPU(new RAM(4096), null);
+            OpcodeDecoder addVyToVx = new AddVyToVx(cpu);
 
             cpu.StoreIntoRegister(0, 0xFF);
             cpu.StoreIntoRegister(1, 0x1);
@@ -33,7 +33,6 @@ namespace Chip8ConsoleTest
             addVyToVx.Execute(0x8014);
 
             Assert.Equal(1, cpu.GetFromRegister(0xF));
-
         }
 
 
@@ -68,12 +67,47 @@ namespace Chip8ConsoleTest
         public void Add_Vx_To_Vy_With_Decoder()
         {
             var cpu = new Chip8CPU(new RAM(4096), null);
-            var decoder = new Decoder(cpu);
+            var decoder = new GeneralDecoder(cpu);
 
             cpu.StoreIntoRegister(3, 0x1);
             cpu.StoreIntoRegister(7, 0x1);
 
             decoder.Execute(0x8374);
+
+            Assert.Equal(2, cpu.GetFromRegister(3));
+        }
+        [Fact]
+        public void Cpu_Tick()
+        {
+            var memory = new RAM(4096);
+            var cpu = new Chip8CPU(memory, null);
+            cpu.Start();
+            memory.Store(0x200, 0x83);
+            memory.Store(0x201, 0x74);
+
+            cpu.StoreIntoRegister(3, 0x1);
+            cpu.StoreIntoRegister(7, 0x1);
+
+            cpu.Tick();
+
+            Assert.Equal(2, cpu.GetFromRegister(3));
+        }
+
+        [Fact]
+        public void Jump_To()
+        {
+            var memory = new RAM(4096);
+            var cpu = new Chip8CPU(memory, null);
+            cpu.Start();
+            var jumpTo = new JumpTo(cpu);
+
+            memory.Store(0x201, 0x83);
+            memory.Store(0x202, 0x74);
+            cpu.StoreIntoRegister(3, 0x1);
+            cpu.StoreIntoRegister(7, 0x1);
+
+            jumpTo.Execute(0x1201);
+            cpu.Tick();
 
             Assert.Equal(2, cpu.GetFromRegister(3));
         }

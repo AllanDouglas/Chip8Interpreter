@@ -11,13 +11,13 @@ namespace Chip8Console.CPU
             };
         }
 
-        public override ushort FilterOpcode => 0x0000;
+        public override ushort FilterNibble => 0x0000;
 
         public override void Execute(ushort opcode)
         {
             foreach (var decoder in opcodeDecoders)
             {
-                if (decoder.FilterOpcode != (opcode & 0x000f)) continue;
+                if (decoder.FilterNibble != (opcode & 0x000f)) continue;
                 decoder.Execute(opcode);
                 break;
             }

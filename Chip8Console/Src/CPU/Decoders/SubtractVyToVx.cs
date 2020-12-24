@@ -3,7 +3,7 @@ namespace Chip8Console.CPU
     public class SubtractVyToVx : OpcodeDecoder
     {
         public SubtractVyToVx(ICPU cpu) : base(cpu) { }
-        public override ushort FilterOpcode => 0x0005;
+        public override ushort FilterNibble => 0x0005;
         public override void Execute(ushort opcode)
         {
             var y = (opcode & 0x00F0) >> 4;

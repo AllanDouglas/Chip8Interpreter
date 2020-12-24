@@ -2,7 +2,7 @@ namespace Chip8Console.CPU
 {
     public class SetIRegister : OpcodeDecoder
     {
-        public override ushort FilterOpcode => 0xA000;
+        public override ushort FilterNibble => 0xA000;
 
         public SetIRegister(ICPU cpu) : base(cpu) { }
 

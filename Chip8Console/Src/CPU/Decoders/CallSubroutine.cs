@@ -6,7 +6,7 @@ namespace Chip8Console.CPU
         {
         }
 
-        public override ushort FilterOpcode => 0x2000;
+        public override ushort FilterNibble => 0x2000;
 
         public override void Execute(ushort opcode)
         {

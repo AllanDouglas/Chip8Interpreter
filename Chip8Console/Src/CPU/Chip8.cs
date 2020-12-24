@@ -8,7 +8,7 @@ namespace Chip8Console.CPU
     {
         private readonly IMemory memory;
         private readonly IKeyboard keyboard;
-        private Decoder decoder;
+        private GeneralDecoder decoder;
 
         public Chip8CPU(IMemory memory, IKeyboard keyboard)
         {
@@ -48,7 +48,7 @@ namespace Chip8Console.CPU
             memory.Flush();
 
             // load fontset
-            decoder = new Decoder(this);
+            decoder = new GeneralDecoder(this);
 
         }
 
