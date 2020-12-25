@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace Chip8Console.CPU
 {
     public class RegisterOperations : OpcodeDecoder
@@ -12,15 +14,15 @@ namespace Chip8Console.CPU
             };
         }
 
-        public override ushort FilterNibble => 0x8000;
+        public override ushort FilterOpcode => 0x8000;
 
-        public override void Execute(ushort opcode)
+        public override void Execute(Opcode opcode)
         {
-            var subopcode = opcode & 0x000F;
+            var subopcode = opcode.value & 0x000F;
 
             foreach (var decoder in opcodeDecoders)
             {
-                if (decoder.FilterNibble != subopcode) continue;
+                if (decoder.FilterOpcode != subopcode) continue;
                 decoder.Execute(opcode);
                 break;
             }

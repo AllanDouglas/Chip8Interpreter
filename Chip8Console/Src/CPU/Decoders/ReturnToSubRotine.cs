@@ -6,9 +6,9 @@ namespace Chip8Console.CPU
         {
         }
 
-        public override ushort FilterNibble => 0x000E;
+        public override ushort FilterOpcode => 0x000E;
 
-        public override void Execute(ushort opcode)
+        public override void Execute(Opcode opcode)
         {
             cpu.ProgramCounter = cpu.Stack[cpu.StackPointer];
             --cpu.StackPointer;

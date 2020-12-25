@@ -103,10 +103,134 @@ namespace Chip8ConsoleTest
 
             memory.Store(0x201, 0x83);
             memory.Store(0x202, 0x74);
+
             cpu.StoreIntoRegister(3, 0x1);
             cpu.StoreIntoRegister(7, 0x1);
 
             jumpTo.Execute(0x1201);
+            cpu.Tick();
+
+            Assert.Equal(2, cpu.GetFromRegister(3));
+        }
+
+        [Fact]
+        public void SkipsIfEqualsToConst_3XNN()
+        {
+            var memory = new RAM(4096);
+            var cpu = new Chip8CPU(memory, null);
+            cpu.Start();
+            var skips = new SkipIfEqualsToConst(cpu);
+
+            memory.Store(0x200, 0x00);
+            memory.Store(0x201, 0x00);
+            memory.Store(0x202, 0x00);
+            memory.Store(0x203, 0x00);
+            memory.Store(0x204, 0x83);
+            memory.Store(0x205, 0x74);
+
+            cpu.StoreIntoRegister(0xA, 0xA);
+            cpu.StoreIntoRegister(3, 0x1);
+            cpu.StoreIntoRegister(7, 0x1);
+
+            skips.Execute(new Opcode(0x3A0A));
+            cpu.Tick();
+
+            Assert.Equal(2, cpu.GetFromRegister(3));
+        }
+        [Fact]
+        public void SkipsIfEqualsToConst_Fail_3XNN()
+        {
+            var memory = new RAM(4096);
+            var cpu = new Chip8CPU(memory, null);
+            cpu.Start();
+            var skips = new SkipIfEqualsToConst(cpu);
+
+            memory.Store(0x200, 0x00);
+            memory.Store(0x201, 0x00);
+            memory.Store(0x202, 0x00);
+            memory.Store(0x203, 0x00);
+            memory.Store(0x204, 0x83);
+            memory.Store(0x205, 0x74);
+
+            cpu.StoreIntoRegister(0xA, 0xA);
+            cpu.StoreIntoRegister(3, 0x1);
+            cpu.StoreIntoRegister(7, 0x1);
+
+            skips.Execute(new Opcode(0x3A01));
+            cpu.Tick();
+
+            Assert.NotEqual(2, cpu.GetFromRegister(3));
+        }
+
+        [Fact]
+        public void SkipsIfNotEqualsToConst_4XNN()
+        {
+            var memory = new RAM(4096);
+            var cpu = new Chip8CPU(memory, null);
+            cpu.Start();
+            var skips = new SkipIfNotEqualstoConst(cpu);
+
+            memory.Store(0x200, 0x00);
+            memory.Store(0x201, 0x00);
+            memory.Store(0x202, 0x00);
+            memory.Store(0x203, 0x00);
+            memory.Store(0x204, 0x83);
+            memory.Store(0x205, 0x74);
+
+            cpu.StoreIntoRegister(0xA, 0xA);
+            cpu.StoreIntoRegister(3, 0x1);
+            cpu.StoreIntoRegister(7, 0x1);
+
+            skips.Execute(new Opcode(0x4A0A));
+            cpu.Tick();
+
+            Assert.Equal(2, cpu.GetFromRegister(3));
+        }
+        [Fact]
+        public void SkipsIfNotEqualsToConst_Fail_4XNN()
+        {
+            var memory = new RAM(4096);
+            var cpu = new Chip8CPU(memory, null);
+            cpu.Start();
+            var skips = new SkipIfNotEqualstoConst(cpu);
+
+            memory.Store(0x200, 0x00);
+            memory.Store(0x201, 0x00);
+            memory.Store(0x202, 0x00);
+            memory.Store(0x203, 0x00);
+            memory.Store(0x204, 0x83);
+            memory.Store(0x205, 0x74);
+
+            cpu.StoreIntoRegister(0xA, 0xA);
+            cpu.StoreIntoRegister(3, 0x1);
+            cpu.StoreIntoRegister(7, 0x1);
+
+            skips.Execute(new Opcode(0x4A01));
+            cpu.Tick();
+
+            Assert.Equal(2, cpu.GetFromRegister(3));
+        }
+
+        [Fact]
+        public void SkipsIfVxEqualsVy_5XY0()
+        {
+            var memory = new RAM(4096);
+            var cpu = new Chip8CPU(memory, null);
+            cpu.Start();
+            var skips = new SkipIfNotEqualstoConst(cpu);
+
+            memory.Store(0x200, 0x00);
+            memory.Store(0x201, 0x00);
+            memory.Store(0x202, 0x00);
+            memory.Store(0x203, 0x00);
+            memory.Store(0x204, 0x83);
+            memory.Store(0x205, 0x74);
+
+            cpu.StoreIntoRegister(0xA, 0x1);
+            cpu.StoreIntoRegister(3, 0x1);
+            cpu.StoreIntoRegister(7, 0x1);
+
+            skips.Execute(new Opcode(0x5A30));
             cpu.Tick();
 
             Assert.Equal(2, cpu.GetFromRegister(3));

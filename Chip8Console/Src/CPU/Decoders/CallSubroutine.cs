@@ -6,13 +6,13 @@ namespace Chip8Console.CPU
         {
         }
 
-        public override ushort FilterNibble => 0x2000;
+        public override ushort FilterOpcode => 0x2000;
 
-        public override void Execute(ushort opcode)
+        public override void Execute(Opcode opcode)
         {
             cpu.Stack[cpu.StackPointer] = cpu.ProgramCounter;
             ++cpu.StackPointer;
-            cpu.ProgramCounter = (ushort)(opcode & 0x0FFF);
+            cpu.ProgramCounter = (ushort)(opcode.value & 0x0FFF);
         }
     }
 }

@@ -3,7 +3,7 @@ namespace Chip8Console.CPU
 
     public abstract class OpcodeDecoder : IOpcodeDecoder
     {
-        public abstract ushort FilterNibble { get; }
+        public abstract ushort FilterOpcode { get; }
 
         protected ICPU cpu;
 
@@ -12,9 +12,10 @@ namespace Chip8Console.CPU
             this.cpu = cpu;
         }
 
-        public abstract void Execute(ushort opcode);
+        public void Execute(ushort opcode) => Execute(new Opcode(opcode));
+        public abstract void Execute(Opcode opcode);
 
-        public override string ToString() => string.Format("{0} opcode: {1:X8}", this.GetType().Name, FilterNibble);
+        public override string ToString() => string.Format("{0} opcode: {1:X8}", GetType().Name, FilterOpcode);
 
     }
 }

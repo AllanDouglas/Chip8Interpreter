@@ -8,22 +8,25 @@ namespace Chip8Console.CPU
         {
             opcodeDecoders = new OpcodeDecoder[] {
                 new SetIRegister(cpu),
+                new SkipIfEqualsToConst(cpu),
+                new SkipIfNotEqualstoConst(cpu),
+                new SkipIfVxEualsVy(cpu),
                 new RegisterOperations(cpu),
                 new CallSubroutine(cpu),
                 new SoubroutineDecoder(cpu)
             };
         }
 
-        public override ushort FilterNibble => 0xF000;
+        public override ushort FilterOpcode => 0xF000;
 
-        public override void Execute(ushort opcode)
+        public override void Execute(Opcode opcode)
         {
-            var subopcode = opcode & FilterNibble;
+            var subopcode = opcode.value & FilterOpcode;
 
             foreach (var decoder in opcodeDecoders)
             {
-                if (decoder.FilterNibble != subopcode) continue;
-                decoder.Execute(opcode);
+                if (decoder.FilterOpcode != subopcode) continue;
+                decoder.Execute(opcode.value);
                 break;
             }
         }

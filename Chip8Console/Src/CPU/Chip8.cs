@@ -61,7 +61,7 @@ namespace Chip8Console.CPU
         public void Tick()
         {
             // Fetch opcode
-            var opcode = Getopcode();
+            var opcode = GetOpcode();
             // Decode opcode
             // Execute opcode
             decoder.Execute(opcode);
@@ -80,6 +80,6 @@ namespace Chip8Console.CPU
             }
         }
 
-        private ushort Getopcode() => (ushort)(memory.Read(ProgramCounter) << 8 | memory.Read((ushort)(ProgramCounter + 1)));
+        private ushort GetOpcode() => (ushort)(memory.Read(ProgramCounter) << 8 | memory.Read((ushort)(ProgramCounter + 1)));
     }
 }

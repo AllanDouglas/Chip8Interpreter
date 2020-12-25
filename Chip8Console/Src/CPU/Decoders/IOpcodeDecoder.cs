@@ -2,8 +2,9 @@ namespace Chip8Console.CPU
 {
     public interface IOpcodeDecoder
     {
-        ushort FilterNibble { get; }
+        ushort FilterOpcode { get; }
 
         void Execute(ushort opcode);
+        void Execute(Opcode opcode);
     }
 }
