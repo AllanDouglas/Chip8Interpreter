@@ -236,6 +236,21 @@ namespace Chip8ConsoleTest
         }
 
         [Fact]
+        public void AddConstToVx_6XNN()
+        {
+            var memory = new RAM(4096);
+            var cpu = new Chip8CPU(memory, null);
+            cpu.Start();
+            var operation = new AddConstToVx(cpu);
+            
+            cpu.StoreIntoRegister(3, 0x1);
+            operation.Execute(new Opcode(0x6305));
+
+            Assert.Equal(6, cpu.GetFromRegister(3));
+        }
+
+
+        [Fact]
         public void SetConstToVx_6XNN()
         {
             var memory = new RAM(4096);
@@ -248,6 +263,7 @@ namespace Chip8ConsoleTest
             Assert.Equal(5, cpu.GetFromRegister(0xA));
 
         }
+
 
     }
 }
