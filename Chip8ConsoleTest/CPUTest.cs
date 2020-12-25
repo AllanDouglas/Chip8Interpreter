@@ -232,8 +232,21 @@ namespace Chip8ConsoleTest
 
             skips.Execute(new Opcode(0x5A30));
             cpu.Tick();
-
             Assert.Equal(2, cpu.GetFromRegister(3));
+        }
+
+        [Fact]
+        public void SetConstToVx_6XNN()
+        {
+            var memory = new RAM(4096);
+            var cpu = new Chip8CPU(memory, null);
+            cpu.Start();
+            var operation = new SetConstToVx(cpu);
+
+            operation.Execute(new Opcode(0x6A05));
+
+            Assert.Equal(5, cpu.GetFromRegister(0xA));
+
         }
 
     }

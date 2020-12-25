@@ -10,6 +10,7 @@ namespace Chip8Console.CPU
                 new SetIRegister(cpu),
                 new SkipIfEqualsToConst(cpu),
                 new SkipIfNotEqualstoConst(cpu),
+                new SetConstToVx(cpu),
                 new SkipIfVxEualsVy(cpu),
                 new RegisterOperations(cpu),
                 new CallSubroutine(cpu),
