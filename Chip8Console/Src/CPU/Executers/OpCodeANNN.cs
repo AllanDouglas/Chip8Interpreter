@@ -1,6 +1,6 @@
 namespace Chip8Console.CPU
 {
-    public class OpCodeANNN : Executer
+    public class OpCodeANNN : AOpCodeExecuter
     {
 
         public override OpCode OpCode => new(0xA000);

@@ -2,7 +2,7 @@ using System;
 
 namespace Chip8Console.CPU
 {
-    public class Unknown : Executer
+    public class Unknown : AOpCodeExecuter
     {
         public Unknown(ICPU cpu) : base(cpu)
         {

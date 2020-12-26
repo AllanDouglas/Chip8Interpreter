@@ -111,7 +111,8 @@ namespace Chip8Console.CPU
         {
             return new OpCodeDecoder(new OpCode(0xF000), this)
             {
-                new OpCodeFX1E(this)
+                new OpCodeFX1E(this),
+                new OpCodeFX29(this)
             };
         }
         private OpCodeDecoder CreateGeneralDecoder()

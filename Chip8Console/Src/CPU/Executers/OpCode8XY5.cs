@@ -1,6 +1,6 @@
 namespace Chip8Console.CPU
 {
-    public class OpCode8XY5 : Executer
+    public class OpCode8XY5 : AOpCodeExecuter
     {
         public OpCode8XY5(ICPU cpu) : base(cpu) { }
 

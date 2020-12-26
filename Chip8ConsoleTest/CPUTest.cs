@@ -12,7 +12,7 @@ namespace Chip8Console.CPU
         public void ADD_Vx_To_Vy()
         {
             ICPU cpu = new Chip8CPU(new RAM(4096), null, null);
-            Executer addVyToVx = new OpCode8XY4(cpu);
+            AOpCodeExecuter addVyToVx = new OpCode8XY4(cpu);
 
             cpu.StoreIntoRegister(3, 0x1);
             cpu.StoreIntoRegister(7, 0x1);
@@ -25,7 +25,7 @@ namespace Chip8Console.CPU
         public void ADD_Vx_To_Vy_With_Carry_1()
         {
             ICPU cpu = new Chip8CPU(new RAM(4096), null, null);
-            Executer addVyToVx = new OpCode8XY4(cpu);
+            AOpCodeExecuter addVyToVx = new OpCode8XY4(cpu);
 
             cpu.StoreIntoRegister(0, 0xFF);
             cpu.StoreIntoRegister(1, 0x1);
