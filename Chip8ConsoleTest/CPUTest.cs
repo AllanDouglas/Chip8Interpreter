@@ -334,5 +334,21 @@ namespace Chip8Console.CPU
             Assert.Equal(16, videoSum);
         }
 
+        [Fact]
+        public void Decode_6000()
+        {
+            var memory = new RAM(4096);
+            var cpu = new Chip8CPU(memory, null, null);
+            cpu.Start();
+            cpu.StoreIntoRegister(0, 0x1);
+            
+            memory.Store(0x200, 0x60);
+            memory.Store(0x201, 0x00);
+
+            cpu.Tick();
+
+            Assert.Equal(0, cpu.GetFromRegister(0));
+        }
+
     }
 }

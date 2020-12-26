@@ -62,8 +62,17 @@ namespace Chip8Console.CPU
             decoder = new GeneralDecoder(this, new OpCode(0xF000),
                 CreateSubroutineDecoder(),
                 CreateRegisterOperationsDecoder(),
-                CreateGeneralDecoder(),
-                CreateMemDecoder()
+                CreateMemDecoder(),
+                OpCodeDecoder.CreateDecoderFor(new OpCode1NNN(this), this),
+                OpCodeDecoder.CreateDecoderFor(new OpCode2NNN(this), this),
+                OpCodeDecoder.CreateDecoderFor(new OpCode3XNN(this), this),
+                OpCodeDecoder.CreateDecoderFor(new OpCode4XNN(this), this),
+                OpCodeDecoder.CreateDecoderFor(new OpCode5XY0(this), this),
+                OpCodeDecoder.CreateDecoderFor(new OpCode6XNN(this), this),
+                OpCodeDecoder.CreateDecoderFor(new OpCode7XNN(this), this),
+                OpCodeDecoder.CreateDecoderFor(new OpCode9XY0(this), this),
+                OpCodeDecoder.CreateDecoderFor(new OpCodeANNN(this), this),
+                OpCodeDecoder.CreateDecoderFor(new OpCodeDXYN(this), this)
             );
 
         }
@@ -115,24 +124,6 @@ namespace Chip8Console.CPU
                 new OpCodeFX29(this)
             };
         }
-        private OpCodeDecoder CreateGeneralDecoder()
-        {
-            return new OpCodeDecoder(new OpCode(0xF000), this)
-            {
-                new OpCode1NNN(this),
-                new OpCodeANNN(this),
-                new OpCode3XNN(this),
-                new OpCode4XNN(this),
-                new OpCode6XNN(this),
-                new OpCode7XNN(this),
-                new OpCode8XY4(this),
-                new OpCode5XY0(this),
-                new OpCode9XY0(this),
-                new OpCode2NNN(this),
-                new OpCodeDXYN(this)
-            };
-        }
-
         private OpCodeDecoder CreateRegisterOperationsDecoder()
         {
             return new OpCodeDecoder(new OpCode(0x8000), this)
@@ -145,7 +136,7 @@ namespace Chip8Console.CPU
 
         private OpCodeDecoder CreateSubroutineDecoder()
         {
-            return new OpCodeDecoder(new OpCode(0x0000), this)
+            return new OpCodeDecoder(new OpCode(0xFFFF), this)
             {
                 new OpCode00EE(this),
                 new OpCode00E0(this)

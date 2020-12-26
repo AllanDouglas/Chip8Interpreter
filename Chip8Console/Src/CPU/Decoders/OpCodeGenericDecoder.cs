@@ -3,18 +3,13 @@ using System.Collections.Generic;
 
 namespace Chip8Console.CPU
 {
-    public class OpCodeDecoder : IOpCodeDecoder, IEnumerable<IOpCodeExecuter>
+    public class OpCodeGenericDecoder : IOpCodeDecoder, IEnumerable<IOpCodeExecuter>
     {
 
-        public static OpCodeDecoder CreateDecoderFor(IOpCodeExecuter executer, ICPU cpu)
-        {
-            return new OpCodeDecoder(executer.OpCode, cpu) { executer };
-        }
-
         private readonly List<IOpCodeExecuter> executers = new();
-        public OpCodeDecoder(OpCode opCode, ICPU cpu)
+        public OpCodeGenericDecoder(ICPU cpu)
         {
-            Filter = opCode;
+            Filter = new OpCode(0xffff);
             Unknown = new Unknown(cpu);
         }
 
@@ -44,9 +39,6 @@ namespace Chip8Console.CPU
         public IEnumerator<IOpCodeExecuter> GetEnumerator() => executers.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => executers.GetEnumerator();
-
-        public override string ToString() => $"Decoder {Filter.ToString()}";
-
     }
 
 }

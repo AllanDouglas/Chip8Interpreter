@@ -17,8 +17,9 @@ namespace Chip8Console.CPU
 
         public IOpCodeExecuter Decode(OpCode opCode)
         {
-            var subopcode = new OpCode((ushort)(opCode.value & Filter.value));
 
+            var subopcode = new OpCode((ushort)(opCode.value & Filter.value));
+            
             foreach (var decoder in decoders)
             {
                 if (decoder.Filter != subopcode) continue;
