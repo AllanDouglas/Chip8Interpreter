@@ -236,6 +236,30 @@ namespace Chip8ConsoleTest
         }
 
         [Fact]
+        public void SkipsIfVxNotEqualsVy_9XY0()
+        {
+            var memory = new RAM(4096);
+            var cpu = new Chip8CPU(memory, null);
+            cpu.Start();
+            var skips = new SkipIfNotEqualstoConst(cpu);
+
+            memory.Store(0x200, 0x00);
+            memory.Store(0x201, 0x00);
+            memory.Store(0x202, 0x00);
+            memory.Store(0x203, 0x00);
+            memory.Store(0x204, 0x83);
+            memory.Store(0x205, 0x74);
+
+            cpu.StoreIntoRegister(0xA, 0x2);
+            cpu.StoreIntoRegister(3, 0x1);
+            cpu.StoreIntoRegister(7, 0x1);
+
+            skips.Execute(new Opcode(0x5A30));
+            cpu.Tick();
+            Assert.Equal(2, cpu.GetFromRegister(3));
+        }
+
+        [Fact]
         public void AddConstToVx_6XNN()
         {
             var memory = new RAM(4096);
@@ -271,10 +295,10 @@ namespace Chip8ConsoleTest
             var cpu = new Chip8CPU(memory, null);
             cpu.Start();
             var operation = new SetVxToVy(cpu);
-           
+
             cpu.StoreIntoRegister(3, 0x1);
             cpu.StoreIntoRegister(4, 0x5);
-           
+
             operation.Execute(new Opcode(0x8340));
 
             Assert.Equal(5, cpu.GetFromRegister(3));

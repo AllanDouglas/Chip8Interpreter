@@ -11,9 +11,12 @@ namespace Chip8Console.CPU
                 new SkipIfEqualsToConst(cpu),
                 new SkipIfNotEqualstoConst(cpu),
                 new SetConstToVx(cpu),
-                new SkipIfVxEualsVy(cpu),
-                new RegisterOperations(cpu),
+                new AddConstToVx(cpu),
+                new AddVyToVx(cpu),
+                new SkipIfVxEqualsVy(cpu),
+                new SkipIfVxNotEqualsVy(cpu),
                 new CallSubroutine(cpu),
+                new RegisterOperations(cpu),
                 new SoubroutineDecoder(cpu)
             };
         }

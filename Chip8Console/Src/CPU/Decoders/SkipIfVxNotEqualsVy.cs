@@ -1,8 +1,8 @@
 namespace Chip8Console.CPU
 {
-    public class SkipIfVxEualsVy : OpcodeDecoder
+    public class SkipIfVxNotEqualsVy : OpcodeDecoder
     {
-        public SkipIfVxEualsVy(ICPU cpu) : base(cpu)
+        public SkipIfVxNotEqualsVy(ICPU cpu) : base(cpu)
         {
         }
 
@@ -15,7 +15,7 @@ namespace Chip8Console.CPU
             var Vx = cpu.GetFromRegister(x);
             var Vy = cpu.GetFromRegister(y);
 
-            if (Vx == Vy)
+            if (Vx != Vy)
             {
                 cpu.ProgramCounter += 2;
             }

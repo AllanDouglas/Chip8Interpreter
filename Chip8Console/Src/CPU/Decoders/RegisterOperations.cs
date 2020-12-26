@@ -10,7 +10,8 @@ namespace Chip8Console.CPU
         {
             opcodeDecoders = new OpcodeDecoder[] {
                 new AddVyToVx(cpu),
-                new SubtractVyToVx(cpu)
+                new SubtractVyToVx(cpu),
+                new SetVxToVy(cpu)
             };
         }
 
