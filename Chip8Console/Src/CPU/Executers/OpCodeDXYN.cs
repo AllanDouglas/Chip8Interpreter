@@ -1,14 +1,16 @@
 namespace Chip8Console.CPU
 {
-    public class DrawSpriteAtXY : OpcodeDecoder
+    public class OpCodeDXYN : Executer
     {
-        public DrawSpriteAtXY(ICPU cpu) : base(cpu)
+        public OpCodeDXYN(ICPU cpu) : base(cpu)
         {
         }
 
-        public override ushort FilterOpcode => 0xD000;
+        public override OpCode OpCode => new(0xD000);
 
-        public override void Execute(Opcode opcode)
+        public override OpCode Filter => new(0xF000);
+
+        public override void Execute(OpCode opcode)
         {
             var x = cpu.GetFromRegister((ushort)((opcode.value & 0x0F00) >> 8));
             var y = cpu.GetFromRegister((ushort)((opcode.value & 0x00F0) >> 4));

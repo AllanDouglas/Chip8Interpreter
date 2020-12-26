@@ -1,10 +1,8 @@
 namespace Chip8Console.CPU
 {
-    public interface IOpcodeDecoder
+    public interface IOpCodeDecoder
     {
-        ushort FilterOpcode { get; }
-
-        void Execute(ushort opcode);
-        void Execute(Opcode opcode);
+        OpCode Filter { get; }
+        IOpCodeExecuter Decode(OpCode opCode);
     }
 }

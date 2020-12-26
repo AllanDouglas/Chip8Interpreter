@@ -1,45 +1,32 @@
 namespace Chip8Console.CPU
 {
-    public class GeneralDecoder : OpcodeDecoder
+    public sealed class GeneralDecoder : IOpCodeDecoder
     {
-        private readonly OpcodeDecoder[] opcodeDecoders;
+
         private readonly Unknown unknownn;
-        public GeneralDecoder(ICPU cpu) : base(cpu)
+        private readonly IOpCodeDecoder[] decoders;
+
+        public GeneralDecoder(ICPU cpu, OpCode opCode, params IOpCodeDecoder[] decoders)
         {
             unknownn = new Unknown(cpu);
-
-            opcodeDecoders = new OpcodeDecoder[] {
-                new JumpTo(cpu),
-                new SetIRegister(cpu),
-                new SkipIfEqualsToConst(cpu),
-                new SkipIfNotEqualstoConst(cpu),
-                new SetConstToVx(cpu),
-                new AddConstToVx(cpu),
-                new AddVyToVx(cpu),
-                new SkipIfVxEqualsVy(cpu),
-                new SkipIfVxNotEqualsVy(cpu),
-                new CallSubroutine(cpu),
-                new RegisterOperations(cpu),
-                new SoubroutineDecoder(cpu),
-                new DrawSpriteAtXY(cpu),
-                new MemDecoder(cpu)
-            };
+            Filter = opCode;
+            this.decoders = decoders;
         }
 
-        public override ushort FilterOpcode => 0xF000;
+        public OpCode Filter { get; private set; }
 
-        public override void Execute(Opcode opcode)
+        public IOpCodeExecuter Decode(OpCode opCode)
         {
-            var subopcode = opcode.value & FilterOpcode;
+            var subopcode = new OpCode((ushort)(opCode.value & Filter.value));
 
-            foreach (var decoder in opcodeDecoders)
+            foreach (var decoder in decoders)
             {
-                if (decoder.FilterOpcode != subopcode) continue;
-                decoder.Execute(opcode);
-                return;
+                if (decoder.Filter != subopcode) continue;
+                return decoder.Decode(opCode);
             }
 
-            unknownn.Execute(opcode);
+            return unknownn;
         }
+
     }
 }

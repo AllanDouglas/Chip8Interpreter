@@ -10,13 +10,15 @@ namespace Chip8Console.CPU
         private readonly IMemory memory;
         private readonly IGPU gpu;
         private readonly IKeyboard keyboard;
-        private GeneralDecoder decoder;
+        private IOpCodeDecoder decoder;
 
         public Chip8CPU(IMemory memory, IGPU gpu, IKeyboard keyboard)
         {
             this.memory = memory;
             this.gpu = gpu;
             this.keyboard = keyboard;
+
+
         }
 
         public byte StackPointer { get; set; }
@@ -56,7 +58,13 @@ namespace Chip8Console.CPU
             Memory.Flush();
 
             // load fontset
-            decoder = new GeneralDecoder(this);
+
+            decoder = new GeneralDecoder(this, new OpCode(0xF000),
+                CreateSubroutineDecoder(),
+                CreateRegisterOperationsDecoder(),
+                CreateGeneralDecoder(),
+                CreateMemDecoder()
+            );
 
         }
 
@@ -72,8 +80,9 @@ namespace Chip8Console.CPU
             // Fetch opcode
             var opcode = GetOpcode();
             // Decode opcode
+            var executer = decoder.Decode(opcode);
             // Execute opcode
-            decoder.Execute(opcode);
+            executer.Execute(opcode);
 
             // Update timers
             if (DelayTimer > 0)
@@ -89,12 +98,59 @@ namespace Chip8Console.CPU
             }
         }
 
-        private Opcode GetOpcode()
+        private OpCode GetOpcode()
         {
             var first = Memory.Read(ProgramCounter) << 8;
             var secound = Memory.Read((ushort)(ProgramCounter + 1));
-            
+
             return new((ushort)(first | secound));
         }
+
+        #region Create Decoders
+        private OpCodeDecoder CreateMemDecoder()
+        {
+            return new OpCodeDecoder(new OpCode(0xF000), this)
+            {
+                new OpCodeFX1E(this)
+            };
+        }
+        private OpCodeDecoder CreateGeneralDecoder()
+        {
+            return new OpCodeDecoder(new OpCode(0xF000), this)
+            {
+                new OpCode1NNN(this),
+                new OpCodeANNN(this),
+                new OpCode3XNN(this),
+                new OpCode4XNN(this),
+                new OpCode6XNN(this),
+                new OpCode7XNN(this),
+                new OpCode8XY4(this),
+                new OpCode5XY0(this),
+                new OpCode9XY0(this),
+                new OpCode2NNN(this),
+                new OpCodeDXYN(this)
+            };
+        }
+
+        private OpCodeDecoder CreateRegisterOperationsDecoder()
+        {
+            return new OpCodeDecoder(new OpCode(0x8000), this)
+            {
+                new OpCode8XY4(this),
+                new OpCode8XY5(this),
+                new OpCode8XY0(this)
+            };
+        }
+
+        private OpCodeDecoder CreateSubroutineDecoder()
+        {
+            return new OpCodeDecoder(new OpCode(0x0000), this)
+            {
+                new OpCode00EE(this),
+                new OpCode00E0(this)
+            };
+        }
+
+        #endregion
     }
 }

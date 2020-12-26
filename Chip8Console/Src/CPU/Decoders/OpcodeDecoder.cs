@@ -1,21 +1,44 @@
+using System.Collections;
+using System.Collections.Generic;
+
 namespace Chip8Console.CPU
 {
-
-    public abstract class OpcodeDecoder : IOpcodeDecoder
+    public class OpCodeDecoder : IOpCodeDecoder, IEnumerable<IOpCodeExecuter>
     {
-        public abstract ushort FilterOpcode { get; }
 
-        protected ICPU cpu;
-
-        public OpcodeDecoder(ICPU cpu)
+        private readonly List<IOpCodeExecuter> executers = new();
+        public OpCodeDecoder(OpCode opCode, ICPU cpu)
         {
-            this.cpu = cpu;
+            Filter = opCode;
+            Unknown = new Unknown(cpu);
         }
 
-        public void Execute(ushort opcode) => Execute(new Opcode(opcode));
-        public abstract void Execute(Opcode opcode);
+        private readonly IOpCodeExecuter Unknown;
 
-        public override string ToString() => string.Format("{0} opcode: {1:X8}", GetType().Name, FilterOpcode);
+        public virtual OpCode Filter { get; protected set; }
 
+        public void Add(IOpCodeExecuter executer)
+        {
+            executers.Add(executer);
+        }
+
+        public IOpCodeExecuter Decode(OpCode opCode)
+        {
+
+            foreach (var executer in executers)
+            {
+                var filter = new OpCode((ushort)(opCode.value & executer.Filter.value));
+
+                if (executer.OpCode != filter) continue;
+                return executer;
+            }
+
+            return Unknown;
+        }
+
+        public IEnumerator<IOpCodeExecuter> GetEnumerator() => executers.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => executers.GetEnumerator();
     }
+
 }

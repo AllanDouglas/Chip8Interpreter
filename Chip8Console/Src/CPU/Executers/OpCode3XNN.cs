@@ -1,14 +1,16 @@
 namespace Chip8Console.CPU
 {
-    public class SkipIfEqualsToConst : OpcodeDecoder
+    public class OpCode3XNN : Executer
     {
-        public SkipIfEqualsToConst(ICPU cpu) : base(cpu)
+        public OpCode3XNN(ICPU cpu) : base(cpu)
         {
         }
 
-        public override ushort FilterOpcode => 0x3000;
+        public override OpCode OpCode => new(0x3000);
 
-        public override void Execute(Opcode opcode)
+        public override OpCode Filter => new(0xF000);
+
+        public override void Execute(OpCode opcode)
         {
             var x = (ushort)((opcode.value & 0x0F00) >> 8);
             var Vx = cpu.GetFromRegister(x);

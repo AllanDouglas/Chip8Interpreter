@@ -12,7 +12,7 @@ namespace Chip8Console.CPU
         public void ADD_Vx_To_Vy()
         {
             ICPU cpu = new Chip8CPU(new RAM(4096), null, null);
-            OpcodeDecoder addVyToVx = new AddVyToVx(cpu);
+            Executer addVyToVx = new OpCode8XY4(cpu);
 
             cpu.StoreIntoRegister(3, 0x1);
             cpu.StoreIntoRegister(7, 0x1);
@@ -25,7 +25,7 @@ namespace Chip8Console.CPU
         public void ADD_Vx_To_Vy_With_Carry_1()
         {
             ICPU cpu = new Chip8CPU(new RAM(4096), null, null);
-            OpcodeDecoder addVyToVx = new AddVyToVx(cpu);
+            Executer addVyToVx = new OpCode8XY4(cpu);
 
             cpu.StoreIntoRegister(0, 0xFF);
             cpu.StoreIntoRegister(1, 0x1);
@@ -40,12 +40,12 @@ namespace Chip8Console.CPU
         public void Subtract_Vy_To_Vx()
         {
             var cpu = new Chip8CPU(new RAM(4096), null, null);
-            var addVyToVx = new SubtractVyToVx(cpu);
+            var subtractVyToVx = new OpCode8XY5(cpu);
 
             cpu.StoreIntoRegister(3, 0x1);
             cpu.StoreIntoRegister(7, 0x1);
 
-            addVyToVx.Execute(0x8374);
+            subtractVyToVx.Execute(0x8374);
 
             Assert.Equal(0, cpu.GetFromRegister(3));
         }
@@ -53,12 +53,13 @@ namespace Chip8Console.CPU
         public void Subtract_Vy_To_Vx_With_Carry_1()
         {
             var cpu = new Chip8CPU(new RAM(4096), null, null);
-            var addVyToVx = new SubtractVyToVx(cpu);
+
+            var subtractVyToVx = new OpCode8XY5(cpu);
 
             cpu.StoreIntoRegister(3, 0x1);
             cpu.StoreIntoRegister(7, 0x2);
 
-            addVyToVx.Execute(0x8374);
+            subtractVyToVx.Execute(0x8374);
 
             Assert.Equal(1, cpu.GetFromRegister(0xf));
         }
@@ -67,12 +68,16 @@ namespace Chip8Console.CPU
         public void Add_Vx_To_Vy_With_Decoder()
         {
             var cpu = new Chip8CPU(new RAM(4096), null, null);
-            var decoder = new GeneralDecoder(cpu);
+            var decoder = new OpCodeDecoder(new OpCode(0x000F), cpu);
+            var addVyToVx = new OpCode8XY4(cpu);
+
+            decoder.Add(addVyToVx);
 
             cpu.StoreIntoRegister(3, 0x1);
             cpu.StoreIntoRegister(7, 0x1);
 
-            decoder.Execute(0x8374);
+            OpCode opCode = new(0x8374);
+            decoder.Decode(opCode).Execute(opCode);
 
             Assert.Equal(2, cpu.GetFromRegister(3));
         }
@@ -99,7 +104,7 @@ namespace Chip8Console.CPU
             var memory = new RAM(4096);
             var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
-            var jumpTo = new JumpTo(cpu);
+            var jumpTo = new OpCode1NNN(cpu);
 
             memory.Store(0x201, 0x83);
             memory.Store(0x202, 0x74);
@@ -119,7 +124,7 @@ namespace Chip8Console.CPU
             var memory = new RAM(4096);
             var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
-            var skips = new SkipIfEqualsToConst(cpu);
+            var skips = new OpCode3XNN(cpu);
 
             memory.Store(0x200, 0x00);
             memory.Store(0x201, 0x00);
@@ -132,7 +137,7 @@ namespace Chip8Console.CPU
             cpu.StoreIntoRegister(3, 0x1);
             cpu.StoreIntoRegister(7, 0x1);
 
-            skips.Execute(new Opcode(0x3A0A));
+            skips.Execute(new OpCode(0x3A0A));
             cpu.Tick();
 
             Assert.Equal(2, cpu.GetFromRegister(3));
@@ -143,7 +148,7 @@ namespace Chip8Console.CPU
             var memory = new RAM(4096);
             var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
-            var skips = new SkipIfEqualsToConst(cpu);
+            var skips = new OpCode3XNN(cpu);
 
             memory.Store(0x200, 0x00);
             memory.Store(0x201, 0x00);
@@ -156,7 +161,7 @@ namespace Chip8Console.CPU
             cpu.StoreIntoRegister(3, 0x1);
             cpu.StoreIntoRegister(7, 0x1);
 
-            skips.Execute(new Opcode(0x3A01));
+            skips.Execute(new OpCode(0x3A01));
             cpu.Tick();
 
             Assert.NotEqual(2, cpu.GetFromRegister(3));
@@ -168,7 +173,7 @@ namespace Chip8Console.CPU
             var memory = new RAM(4096);
             var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
-            var skips = new SkipIfNotEqualstoConst(cpu);
+            var skips = new OpCode4XNN(cpu);
 
             memory.Store(0x200, 0x00);
             memory.Store(0x201, 0x00);
@@ -181,7 +186,7 @@ namespace Chip8Console.CPU
             cpu.StoreIntoRegister(3, 0x1);
             cpu.StoreIntoRegister(7, 0x1);
 
-            skips.Execute(new Opcode(0x4A0A));
+            skips.Execute(new OpCode(0x4A0A));
             cpu.Tick();
 
             Assert.Equal(2, cpu.GetFromRegister(3));
@@ -192,7 +197,7 @@ namespace Chip8Console.CPU
             var memory = new RAM(4096);
             var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
-            var skips = new SkipIfNotEqualstoConst(cpu);
+            var skips = new OpCode4XNN(cpu);
 
             memory.Store(0x200, 0x00);
             memory.Store(0x201, 0x00);
@@ -205,7 +210,7 @@ namespace Chip8Console.CPU
             cpu.StoreIntoRegister(3, 0x1);
             cpu.StoreIntoRegister(7, 0x1);
 
-            skips.Execute(new Opcode(0x4A01));
+            skips.Execute(new OpCode(0x4A01));
             cpu.Tick();
 
             Assert.Equal(2, cpu.GetFromRegister(3));
@@ -217,7 +222,7 @@ namespace Chip8Console.CPU
             var memory = new RAM(4096);
             var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
-            var skips = new SkipIfNotEqualstoConst(cpu);
+            var skips = new OpCode4XNN(cpu);
 
             memory.Store(0x200, 0x00);
             memory.Store(0x201, 0x00);
@@ -230,7 +235,7 @@ namespace Chip8Console.CPU
             cpu.StoreIntoRegister(3, 0x1);
             cpu.StoreIntoRegister(7, 0x1);
 
-            skips.Execute(new Opcode(0x5A30));
+            skips.Execute(new OpCode(0x5A30));
             cpu.Tick();
             Assert.Equal(2, cpu.GetFromRegister(3));
         }
@@ -241,7 +246,7 @@ namespace Chip8Console.CPU
             var memory = new RAM(4096);
             var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
-            var skips = new SkipIfNotEqualstoConst(cpu);
+            var skips = new OpCode4XNN(cpu);
 
             memory.Store(0x200, 0x00);
             memory.Store(0x201, 0x00);
@@ -254,7 +259,7 @@ namespace Chip8Console.CPU
             cpu.StoreIntoRegister(3, 0x1);
             cpu.StoreIntoRegister(7, 0x1);
 
-            skips.Execute(new Opcode(0x5A30));
+            skips.Execute(new OpCode(0x5A30));
             cpu.Tick();
             Assert.Equal(2, cpu.GetFromRegister(3));
         }
@@ -265,10 +270,10 @@ namespace Chip8Console.CPU
             var memory = new RAM(4096);
             var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
-            var operation = new AddConstToVx(cpu);
+            var operation = new OpCode7XNN(cpu);
 
             cpu.StoreIntoRegister(3, 0x1);
-            operation.Execute(new Opcode(0x6305));
+            operation.Execute(new OpCode(0x6305));
 
             Assert.Equal(6, cpu.GetFromRegister(3));
         }
@@ -280,9 +285,9 @@ namespace Chip8Console.CPU
             var memory = new RAM(4096);
             var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
-            var operation = new SetConstToVx(cpu);
+            var operation = new OpCode6XNN(cpu);
 
-            operation.Execute(new Opcode(0x6A05));
+            operation.Execute(new OpCode(0x6A05));
 
             Assert.Equal(5, cpu.GetFromRegister(0xA));
 
@@ -294,12 +299,12 @@ namespace Chip8Console.CPU
             var memory = new RAM(4096);
             var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
-            var operation = new SetVxToVy(cpu);
+            var operation = new OpCode8XY0(cpu);
 
             cpu.StoreIntoRegister(3, 0x1);
             cpu.StoreIntoRegister(4, 0x5);
 
-            operation.Execute(new Opcode(0x8340));
+            operation.Execute(new OpCode(0x8340));
 
             Assert.Equal(5, cpu.GetFromRegister(3));
         }
@@ -311,13 +316,13 @@ namespace Chip8Console.CPU
             IGPU gpu = new GPU(64, 32);
             var cpu = new Chip8CPU(memory, gpu, null);
             cpu.Start();
-            IOpcodeDecoder operation = new DrawSpriteAtXY(cpu);
+            IOpCodeExecuter operation = new OpCodeDXYN(cpu);
 
             memory.Store(cpu.RegisterI, 0x3C);
             memory.Store((ushort)(cpu.RegisterI + 1), 0xC3);
             memory.Store((ushort)(cpu.RegisterI + 2), 0xFF);
 
-            operation.Execute(new Opcode(0xD003));
+            operation.Execute(new OpCode(0xD003));
 
             var videoSum = 0;
 

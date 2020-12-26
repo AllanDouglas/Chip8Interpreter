@@ -1,21 +1,22 @@
 namespace Chip8Console.CPU
 {
-    public class SkipIfVxEqualsVy : OpcodeDecoder
+    public class OpCode9XY0 : Executer
     {
-        public SkipIfVxEqualsVy(ICPU cpu) : base(cpu)
+        public OpCode9XY0(ICPU cpu) : base(cpu)
         {
         }
 
-        public override ushort FilterOpcode => 0x5000;
-
-        public override void Execute(Opcode opcode)
+        public override OpCode OpCode => new(0x9000);
+        public override OpCode Filter => new(0xF00F);
+        
+        public override void Execute(OpCode opcode)
         {
             var x = (ushort)((opcode.value & 0x0F00) >> 8);
             var y = (ushort)((opcode.value & 0x00F0) >> 4);
             var Vx = cpu.GetFromRegister(x);
             var Vy = cpu.GetFromRegister(y);
 
-            if (Vx == Vy)
+            if (Vx != Vy)
             {
                 cpu.ProgramCounter += 2;
             }

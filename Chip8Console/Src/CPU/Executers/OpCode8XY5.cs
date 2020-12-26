@@ -1,10 +1,14 @@
 namespace Chip8Console.CPU
 {
-    public class SubtractVyToVx : OpcodeDecoder
+    public class OpCode8XY5 : Executer
     {
-        public SubtractVyToVx(ICPU cpu) : base(cpu) { }
-        public override ushort FilterOpcode => 0x0005;
-        public override void Execute(Opcode opcode)
+        public OpCode8XY5(ICPU cpu) : base(cpu) { }
+
+        public override OpCode OpCode => new(0x8005);
+
+        public override OpCode Filter => new(0xF00F);
+
+        public override void Execute(OpCode opcode)
         {
             var y = (opcode.value & 0x00F0) >> 4;
             var x = (opcode.value & 0x0F00) >> 8;

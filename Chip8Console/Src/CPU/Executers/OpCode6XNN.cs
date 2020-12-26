@@ -1,14 +1,16 @@
 namespace Chip8Console.CPU
 {
-    public class SetConstToVx : OpcodeDecoder
+    public class OpCode6XNN : Executer
     {
-        public SetConstToVx(ICPU cpu) : base(cpu)
+        public OpCode6XNN(ICPU cpu) : base(cpu)
         {
         }
 
-        public override ushort FilterOpcode => 0x6000;
+        public override OpCode OpCode => new(0x6000);
 
-        public override void Execute(Opcode opcode)
+        public override OpCode Filter => new(0xF000);
+
+        public override void Execute(OpCode opcode)
         {
             var x = (ushort)((opcode.value & 0x0F00) >> 8);
             cpu.StoreIntoRegister(x, (byte)(opcode.value & 0x00FF));
