@@ -242,7 +242,7 @@ namespace Chip8ConsoleTest
             var cpu = new Chip8CPU(memory, null);
             cpu.Start();
             var operation = new AddConstToVx(cpu);
-            
+
             cpu.StoreIntoRegister(3, 0x1);
             operation.Execute(new Opcode(0x6305));
 
@@ -262,6 +262,22 @@ namespace Chip8ConsoleTest
 
             Assert.Equal(5, cpu.GetFromRegister(0xA));
 
+        }
+
+        [Fact]
+        public void SetVyToVx()
+        {
+            var memory = new RAM(4096);
+            var cpu = new Chip8CPU(memory, null);
+            cpu.Start();
+            var operation = new SetVxToVy(cpu);
+           
+            cpu.StoreIntoRegister(3, 0x1);
+            cpu.StoreIntoRegister(4, 0x5);
+           
+            operation.Execute(new Opcode(0x8340));
+
+            Assert.Equal(5, cpu.GetFromRegister(3));
         }
 
 
