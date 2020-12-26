@@ -3,10 +3,13 @@ namespace Chip8Console.CPU
     public class GeneralDecoder : OpcodeDecoder
     {
         private readonly OpcodeDecoder[] opcodeDecoders;
-
+        private readonly Unknown unknownn;
         public GeneralDecoder(ICPU cpu) : base(cpu)
         {
+            unknownn = new Unknown(cpu);
+
             opcodeDecoders = new OpcodeDecoder[] {
+                new JumpTo(cpu),
                 new SetIRegister(cpu),
                 new SkipIfEqualsToConst(cpu),
                 new SkipIfNotEqualstoConst(cpu),
@@ -17,7 +20,9 @@ namespace Chip8Console.CPU
                 new SkipIfVxNotEqualsVy(cpu),
                 new CallSubroutine(cpu),
                 new RegisterOperations(cpu),
-                new SoubroutineDecoder(cpu)
+                new SoubroutineDecoder(cpu),
+                new DrawSpriteAtXY(cpu),
+                new MemDecoder(cpu)
             };
         }
 
@@ -30,9 +35,11 @@ namespace Chip8Console.CPU
             foreach (var decoder in opcodeDecoders)
             {
                 if (decoder.FilterOpcode != subopcode) continue;
-                decoder.Execute(opcode.value);
-                break;
+                decoder.Execute(opcode);
+                return;
             }
+
+            unknownn.Execute(opcode);
         }
     }
 }

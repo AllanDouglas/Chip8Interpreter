@@ -1,18 +1,17 @@
 namespace Chip8Console.CPU
 {
-    public class SoubroutineDecoder : OpcodeDecoder
+    public class MemDecoder : OpcodeDecoder
     {
         private OpcodeDecoder[] opcodeDecoders;
 
-        public SoubroutineDecoder(ICPU cpu) : base(cpu)
+        public MemDecoder(ICPU cpu) : base(cpu)
         {
             opcodeDecoders = new OpcodeDecoder[]{
-                new ReturnToRoutine(cpu),
-                new ClearVideo(cpu),
+              new SetVxToRegisterI(cpu)
             };
         }
 
-        public override ushort FilterOpcode => 0x0000;
+        public override ushort FilterOpcode => 0xF000;
 
         public override void Execute(Opcode opcode)
         {

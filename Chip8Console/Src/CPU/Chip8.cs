@@ -1,18 +1,21 @@
 using System;
 using Chip8Console.Keyboard;
 using Chip8Console.Memory;
+using Chip8Console.Video;
 
 namespace Chip8Console.CPU
 {
     public class Chip8CPU : ICPU
     {
         private readonly IMemory memory;
+        private readonly IGPU gpu;
         private readonly IKeyboard keyboard;
         private GeneralDecoder decoder;
 
-        public Chip8CPU(IMemory memory, IKeyboard keyboard)
+        public Chip8CPU(IMemory memory, IGPU gpu, IKeyboard keyboard)
         {
             this.memory = memory;
+            this.gpu = gpu;
             this.keyboard = keyboard;
         }
 
@@ -23,6 +26,11 @@ namespace Chip8Console.CPU
         public ushort RegisterI { get; set; }
         public byte DelayTimer { get; set; }
         public byte SoundTimer { get; set; }
+        public IGPU Gpu => gpu;
+        public IKeyboard Keyboard => keyboard;
+        public bool DrawFlag { get; set; }
+
+        public IMemory Memory => memory;
 
         public byte GetFromRegister(ushort address) => Registers[address];
         public void StoreIntoRegister(ushort address, byte value) => Registers[address] = value;
@@ -45,7 +53,7 @@ namespace Chip8Console.CPU
                 Stack[i] = default;
             }
 
-            memory.Flush();
+            Memory.Flush();
 
             // load fontset
             decoder = new GeneralDecoder(this);
@@ -55,11 +63,12 @@ namespace Chip8Console.CPU
         public void Load(byte[] program)
         {
             for (int i = 0; i < program.Length; ++i)
-                memory.Store((ushort)(i + 512), program[i]);
+                Memory.Store((ushort)(i + 512), program[i]);
         }
 
         public void Tick()
         {
+            DrawFlag = false;
             // Fetch opcode
             var opcode = GetOpcode();
             // Decode opcode
@@ -80,6 +89,12 @@ namespace Chip8Console.CPU
             }
         }
 
-        private ushort GetOpcode() => (ushort)(memory.Read(ProgramCounter) << 8 | memory.Read((ushort)(ProgramCounter + 1)));
+        private Opcode GetOpcode()
+        {
+            var first = Memory.Read(ProgramCounter) << 8;
+            var secound = Memory.Read((ushort)(ProgramCounter + 1));
+            
+            return new((ushort)(first | secound));
+        }
     }
 }

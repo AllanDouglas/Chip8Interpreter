@@ -9,6 +9,6 @@ namespace Chip8Console.CPU
             this.value = opcode;
         }
 
-        public override string ToString() => $"{value:x}";
+        public override string ToString() => $"{value:x4}";
     }
 }

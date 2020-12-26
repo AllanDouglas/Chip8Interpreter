@@ -1,9 +1,9 @@
 using System;
-using Chip8Console.CPU;
 using Chip8Console.Memory;
+using Chip8Console.Video;
 using Xunit;
 
-namespace Chip8ConsoleTest
+namespace Chip8Console.CPU
 {
     public class CPUTest
     {
@@ -11,7 +11,7 @@ namespace Chip8ConsoleTest
         [Fact]
         public void ADD_Vx_To_Vy()
         {
-            ICPU cpu = new Chip8CPU(new RAM(4096), null);
+            ICPU cpu = new Chip8CPU(new RAM(4096), null, null);
             OpcodeDecoder addVyToVx = new AddVyToVx(cpu);
 
             cpu.StoreIntoRegister(3, 0x1);
@@ -24,7 +24,7 @@ namespace Chip8ConsoleTest
         [Fact]
         public void ADD_Vx_To_Vy_With_Carry_1()
         {
-            ICPU cpu = new Chip8CPU(new RAM(4096), null);
+            ICPU cpu = new Chip8CPU(new RAM(4096), null, null);
             OpcodeDecoder addVyToVx = new AddVyToVx(cpu);
 
             cpu.StoreIntoRegister(0, 0xFF);
@@ -39,7 +39,7 @@ namespace Chip8ConsoleTest
         [Fact]
         public void Subtract_Vy_To_Vx()
         {
-            var cpu = new Chip8CPU(new RAM(4096), null);
+            var cpu = new Chip8CPU(new RAM(4096), null, null);
             var addVyToVx = new SubtractVyToVx(cpu);
 
             cpu.StoreIntoRegister(3, 0x1);
@@ -52,7 +52,7 @@ namespace Chip8ConsoleTest
         [Fact]
         public void Subtract_Vy_To_Vx_With_Carry_1()
         {
-            var cpu = new Chip8CPU(new RAM(4096), null);
+            var cpu = new Chip8CPU(new RAM(4096), null, null);
             var addVyToVx = new SubtractVyToVx(cpu);
 
             cpu.StoreIntoRegister(3, 0x1);
@@ -66,7 +66,7 @@ namespace Chip8ConsoleTest
         [Fact]
         public void Add_Vx_To_Vy_With_Decoder()
         {
-            var cpu = new Chip8CPU(new RAM(4096), null);
+            var cpu = new Chip8CPU(new RAM(4096), null, null);
             var decoder = new GeneralDecoder(cpu);
 
             cpu.StoreIntoRegister(3, 0x1);
@@ -80,7 +80,7 @@ namespace Chip8ConsoleTest
         public void Cpu_Tick()
         {
             var memory = new RAM(4096);
-            var cpu = new Chip8CPU(memory, null);
+            var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
             memory.Store(0x200, 0x83);
             memory.Store(0x201, 0x74);
@@ -97,7 +97,7 @@ namespace Chip8ConsoleTest
         public void Jump_To()
         {
             var memory = new RAM(4096);
-            var cpu = new Chip8CPU(memory, null);
+            var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
             var jumpTo = new JumpTo(cpu);
 
@@ -114,10 +114,10 @@ namespace Chip8ConsoleTest
         }
 
         [Fact]
-        public void SkipsIfEqualsToConst_3XNN()
+        public void Skips_If_Equals_To_Const_3XNN()
         {
             var memory = new RAM(4096);
-            var cpu = new Chip8CPU(memory, null);
+            var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
             var skips = new SkipIfEqualsToConst(cpu);
 
@@ -141,7 +141,7 @@ namespace Chip8ConsoleTest
         public void SkipsIfEqualsToConst_Fail_3XNN()
         {
             var memory = new RAM(4096);
-            var cpu = new Chip8CPU(memory, null);
+            var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
             var skips = new SkipIfEqualsToConst(cpu);
 
@@ -163,10 +163,10 @@ namespace Chip8ConsoleTest
         }
 
         [Fact]
-        public void SkipsIfNotEqualsToConst_4XNN()
+        public void Skips_If_Not_Equals_To_Const_4XNN()
         {
             var memory = new RAM(4096);
-            var cpu = new Chip8CPU(memory, null);
+            var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
             var skips = new SkipIfNotEqualstoConst(cpu);
 
@@ -187,10 +187,10 @@ namespace Chip8ConsoleTest
             Assert.Equal(2, cpu.GetFromRegister(3));
         }
         [Fact]
-        public void SkipsIfNotEqualsToConst_Fail_4XNN()
+        public void Skips_If_Not_Equals_To_Const_Fail_4XNN()
         {
             var memory = new RAM(4096);
-            var cpu = new Chip8CPU(memory, null);
+            var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
             var skips = new SkipIfNotEqualstoConst(cpu);
 
@@ -212,10 +212,10 @@ namespace Chip8ConsoleTest
         }
 
         [Fact]
-        public void SkipsIfVxEqualsVy_5XY0()
+        public void Skips_If_Vx_Equals_Vy_5XY0()
         {
             var memory = new RAM(4096);
-            var cpu = new Chip8CPU(memory, null);
+            var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
             var skips = new SkipIfNotEqualstoConst(cpu);
 
@@ -236,10 +236,10 @@ namespace Chip8ConsoleTest
         }
 
         [Fact]
-        public void SkipsIfVxNotEqualsVy_9XY0()
+        public void Skips_If_Vx_Not_Equals_Vy_9XY0()
         {
             var memory = new RAM(4096);
-            var cpu = new Chip8CPU(memory, null);
+            var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
             var skips = new SkipIfNotEqualstoConst(cpu);
 
@@ -260,10 +260,10 @@ namespace Chip8ConsoleTest
         }
 
         [Fact]
-        public void AddConstToVx_6XNN()
+        public void Add_Const_To_Vx_6XNN()
         {
             var memory = new RAM(4096);
-            var cpu = new Chip8CPU(memory, null);
+            var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
             var operation = new AddConstToVx(cpu);
 
@@ -275,10 +275,10 @@ namespace Chip8ConsoleTest
 
 
         [Fact]
-        public void SetConstToVx_6XNN()
+        public void Set_Const_To_Vx_6XNN()
         {
             var memory = new RAM(4096);
-            var cpu = new Chip8CPU(memory, null);
+            var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
             var operation = new SetConstToVx(cpu);
 
@@ -289,10 +289,10 @@ namespace Chip8ConsoleTest
         }
 
         [Fact]
-        public void SetVyToVx()
+        public void Set_Vy_To_Vx_9XY0()
         {
             var memory = new RAM(4096);
-            var cpu = new Chip8CPU(memory, null);
+            var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
             var operation = new SetVxToVy(cpu);
 
@@ -304,6 +304,30 @@ namespace Chip8ConsoleTest
             Assert.Equal(5, cpu.GetFromRegister(3));
         }
 
+        [Fact]
+        public void Draw_Sprite_DXYN()
+        {
+            var memory = new RAM(4096);
+            IGPU gpu = new GPU(64, 32);
+            var cpu = new Chip8CPU(memory, gpu, null);
+            cpu.Start();
+            IOpcodeDecoder operation = new DrawSpriteAtXY(cpu);
+
+            memory.Store(cpu.RegisterI, 0x3C);
+            memory.Store((ushort)(cpu.RegisterI + 1), 0xC3);
+            memory.Store((ushort)(cpu.RegisterI + 2), 0xFF);
+
+            operation.Execute(new Opcode(0xD003));
+
+            var videoSum = 0;
+
+            foreach (var value in gpu.Dump())
+            {
+                videoSum += value;
+            }
+
+            Assert.Equal(16, videoSum);
+        }
 
     }
 }
