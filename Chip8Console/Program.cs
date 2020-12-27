@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using Chip8Console.CPU;
+using Chip8Console.Keyboard;
 using Chip8Console.Memory;
 using Chip8Console.Video;
 
@@ -14,7 +15,7 @@ namespace Chip8Console
             var cpu = new Chip8CPU(
                 new RAM(4096),
                 new GPU(64, 32),
-                null
+                new Joystick()
             );
 
             var video = new ConsoleDisplay(cpu.Gpu);
@@ -30,13 +31,10 @@ namespace Chip8Console
 
                 if (cpu.DrawFlag)
                 {
-                    if (debug == false)
-                    {
-                        video.Clear();
-                    }
-
                     video.Paint();
                 }
+                if (debug == false)
+                    cpu.Keyboard.Update();
 
                 Thread.Sleep(16);
             }
@@ -53,7 +51,6 @@ namespace Chip8Console
                 program[index] = reader.ReadByte();
                 index++;
             }
-
             return program;
         }
     }

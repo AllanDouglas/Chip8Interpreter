@@ -36,7 +36,7 @@ namespace Chip8Console.CPU
         public void Start()
         {
             ProgramCounter = 0x200;
-            RegisterI = 0x0;
+            RegisterI = 0;
             SoundTimer = 0x0;
             DelayTimer = 0x0;
             StackPointer = 0x0;
@@ -64,6 +64,7 @@ namespace Chip8Console.CPU
                 CreateSubroutineDecoder(),
                 CreateRegisterOperationsDecoder(),
                 CreateMemDecoder(),
+                CreateKeyInputDecoder(),
                 OpCodeDecoder.CreateDecoderFor(new OpCode1NNN(this), this),
                 OpCodeDecoder.CreateDecoderFor(new OpCode2NNN(this), this),
                 OpCodeDecoder.CreateDecoderFor(new OpCode3XNN(this), this),
@@ -94,6 +95,9 @@ namespace Chip8Console.CPU
             var executer = decoder.Decode(opcode);
             // Execute opcode
             executer.Execute(opcode);
+            // go to next instruction
+            if (executer.SkipIncrement == false)
+                ProgramCounter += 2;
 
             // Update timers
             if (DelayTimer > 0)
@@ -107,8 +111,7 @@ namespace Chip8Console.CPU
                 }
                 --SoundTimer;
             }
-            // go to next instructiuon
-            ProgramCounter += 2;
+
         }
         private OpCode GetOpcode()
         {
@@ -126,7 +129,9 @@ namespace Chip8Console.CPU
                 new OpCodeFX07(this),
                 new OpCodeFX15(this),
                 new OpCodeFX1E(this),
+                new OpCodeFX18(this),
                 new OpCodeFX29(this),
+                new OpCodeFX33(this),
                 new OpCodeFX55(this),
                 new OpCodeFX65(this),
             };
@@ -152,7 +157,16 @@ namespace Chip8Console.CPU
             return new OpCodeDecoder(new OpCode(0x0000), this)
             {
                 new OpCode00EE(this),
-                new OpCode00E0(this)
+                new OpCode00E0(this),
+                new OpCode0NNN(this),
+            };
+        }
+        private OpCodeDecoder CreateKeyInputDecoder()
+        {
+            return new OpCodeDecoder(new OpCode(0xE000), this)
+            {
+                new OpCodeEX9E(this),
+                new OpCodeEXA1(this)
             };
         }
         static readonly byte[] chip8Fontset =

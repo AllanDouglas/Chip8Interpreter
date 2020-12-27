@@ -8,7 +8,7 @@ namespace Chip8Console.CPU
 
         public override OpCode Filter => new(0xF00F);
 
-        public override OpCode OpCode => new(0x8002);
+        public override OpCode OpCode => new(0x8006);
 
         public override void Execute(OpCode opcode)
         {

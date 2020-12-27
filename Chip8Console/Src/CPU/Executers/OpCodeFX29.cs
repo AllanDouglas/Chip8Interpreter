@@ -12,7 +12,7 @@ namespace Chip8Console.CPU
         {
             var x = (ushort)((opcode.value & 0x0F00) >> 8);
 
-            cpu.RegisterI = cpu.GetFromRegister(x);
+            cpu.RegisterI = (ushort)(cpu.GetFromRegister(x) * 5);
         }
     }
 }

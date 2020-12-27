@@ -11,8 +11,7 @@ namespace Chip8Console.CPU
         public override OpCode Filter => new(0xffff);
         public override void Execute(OpCode opcode)
         {
-            Console.WriteLine($"Not Implemented yet: {opcode}");
-
+            throw new NotImplementedException($"Not Implemented yet: {opcode}");
         }
     }
 }

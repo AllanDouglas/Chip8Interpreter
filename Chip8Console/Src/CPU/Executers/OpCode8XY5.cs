@@ -13,11 +13,10 @@ namespace Chip8Console.CPU
             var y = (ushort)((opcode.value & 0x00F0) >> 4);
             var x = (ushort)((opcode.value & 0x0F00) >> 8);
             var currentX = cpu.GetFromRegister(x);
-            var currenty = cpu.GetFromRegister(y);
+            var currentY = cpu.GetFromRegister(y);
 
-            cpu.StoreIntoRegister(0xF, (currentX > currenty) ? 1 : 0);
-            cpu.StoreIntoRegister(x, (byte)(currentX - currenty));
-
+            cpu.StoreIntoRegister(0xF, (currentX > currentY) ? 1 : 0);
+            cpu.Registers[x] -= currentY;
         }
     }
 }

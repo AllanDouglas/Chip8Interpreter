@@ -16,7 +16,8 @@ namespace Chip8Console.CPU
         {
             var x = (ushort)((opcode.value & 0x0f00) >> 8);
 
-            var rand = new Random().Next(0, 255) & 0x00FF;
+            var constant = opcode.value & 0x00FF;
+            var rand = new Random().Next(0, 255) & constant;
 
             cpu.StoreIntoRegister(x, (byte)rand);
 

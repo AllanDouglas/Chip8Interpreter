@@ -17,6 +17,7 @@ namespace Chip8Console.CPU
             {
                 cpu.StoreIntoRegister(i, cpu.Memory.Read((ushort)(cpu.RegisterI + i)));
             }
+            // cpu.RegisterI += (ushort)(x + 1);
         }
     }
 }

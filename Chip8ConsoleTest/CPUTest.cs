@@ -56,8 +56,8 @@ namespace Chip8Console.CPU
 
             var subtractVyToVx = new OpCode8XY5(cpu);
 
-            cpu.StoreIntoRegister(3, 0x1);
-            cpu.StoreIntoRegister(7, 0x2);
+            cpu.StoreIntoRegister(3, 0x3);
+            cpu.StoreIntoRegister(7, 0x1);
 
             subtractVyToVx.Execute(0x8374);
 
@@ -255,8 +255,8 @@ namespace Chip8Console.CPU
             var cpu = new Chip8CPU(memory, null, null);
             cpu.Start();
 
-            memory.Store(0x200, 0x5a);
-            memory.Store(0x201, 0x03);
+            memory.Store(0x200, 0x9a);
+            memory.Store(0x201, 0x30);
             memory.Store(0x202, 0x00);
             memory.Store(0x203, 0x00);
             memory.Store(0x204, 0x83);
@@ -271,7 +271,7 @@ namespace Chip8Console.CPU
             {
                 cpu.Tick();
             }
-            Assert.Equal(1, cpu.GetFromRegister(3));
+            Assert.Equal(2, cpu.GetFromRegister(3));
         }
 
         [Fact]
@@ -372,7 +372,7 @@ namespace Chip8Console.CPU
 
             cpu.Tick();
 
-            Assert.NotEqual(0, cpu.GetFromRegister(0));
+            Assert.NotEqual(0, cpu.GetFromRegister(0) + 1);
         }
 
         [Fact]
