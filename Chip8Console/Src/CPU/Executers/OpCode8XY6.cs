@@ -12,7 +12,7 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-            var x = (opcode.value & 0xF000) >> 8;
+            var x = (opcode.value & 0x0F00) >> 8;
 
             cpu.StoreIntoRegister(0xF, (byte)(cpu.GetFromRegister((ushort)x) & 0b0001));
 
