@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using Chip8Console.CPU;
@@ -19,7 +18,7 @@ namespace Chip8Console
             );
 
             var video = new ConsoleDisplay(cpu.Gpu);
-            var program = ReadProgram();
+            var program = ReadProgram(args[0]);
 
             cpu.Start();
             cpu.Load(program);
@@ -32,20 +31,21 @@ namespace Chip8Console
                 if (cpu.DrawFlag)
                 {
                     if (debug == false)
+                    {
                         video.Clear();
+                    }
 
                     video.Paint();
-
                 }
 
-                Thread.Sleep(16);
+                Thread.Sleep(32);
             }
 
         }
 
-        private static byte[] ReadProgram()
+        private static byte[] ReadProgram(string path)
         {
-            var reader = new BinaryReader(File.OpenRead("Chip8 emulator Logo.ch8"));
+            var reader = new BinaryReader(File.OpenRead(path));
             var program = new byte[reader.BaseStream.Length];
             var index = 0;
             while (reader.BaseStream.Position < reader.BaseStream.Length)
