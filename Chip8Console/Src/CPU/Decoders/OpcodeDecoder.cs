@@ -45,7 +45,7 @@ namespace Chip8Console.CPU
 
         IEnumerator IEnumerable.GetEnumerator() => executers.GetEnumerator();
 
-        public override string ToString() => $"Decoder {Filter.ToString()}";
+        public override string ToString() => $"Decoder {Filter}";
 
     }
 

@@ -12,7 +12,7 @@ namespace Chip8Console.CPU
         public override void Execute(OpCode opcode)
         {
             Console.WriteLine($"Not Implemented yet: {opcode}");
-            cpu.ProgramCounter += 2;
+
         }
     }
 }

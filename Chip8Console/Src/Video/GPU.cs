@@ -23,9 +23,7 @@ namespace Chip8Console.Video
             }
         }
         public byte[] Dump() => gx;
-
         public void Store(ushort index, byte value) => gx[index] = value;
-
         public byte Read(ushort address) => gx[address];
     }
 }

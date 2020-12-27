@@ -14,7 +14,6 @@ namespace Chip8Console.CPU
         {
             cpu.Gpu.Clear();
             cpu.DrawFlag = true;
-            cpu.ProgramCounter += 2;
         }
     }
 }

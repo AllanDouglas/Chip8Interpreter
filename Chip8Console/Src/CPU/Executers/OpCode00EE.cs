@@ -6,14 +6,13 @@ namespace Chip8Console.CPU
         {
         }
 
-        public override OpCode OpCode => new(0x000E);
+        public override OpCode OpCode => new(0x00EE);
 
         public override OpCode Filter => new(0xFFFF);
 
         public override void Execute(OpCode opcode)
         {
-            cpu.ProgramCounter = cpu.Stack[cpu.StackPointer];
-            --cpu.StackPointer;
+            cpu.ProgramCounter = cpu.Stack[--cpu.StackPointer];
         }
     }
 }

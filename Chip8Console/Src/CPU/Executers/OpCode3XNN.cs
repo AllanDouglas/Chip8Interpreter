@@ -21,7 +21,6 @@ namespace Chip8Console.CPU
                 cpu.ProgramCounter += 2;
             }
 
-            cpu.ProgramCounter += 2;
         }
     }
 }

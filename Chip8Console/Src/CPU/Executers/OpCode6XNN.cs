@@ -14,7 +14,7 @@ namespace Chip8Console.CPU
         {
             var x = (ushort)((opcode.value & 0x0F00) >> 8);
             cpu.StoreIntoRegister(x, (byte)(opcode.value & 0x00FF));
-            cpu.ProgramCounter += 2;
+         
         }
     }
 }

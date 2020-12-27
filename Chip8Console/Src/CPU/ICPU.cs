@@ -6,7 +6,7 @@ namespace Chip8Console.CPU
 {
     public interface ICPU
     {
-        byte[] Registers { get; }
+        // byte[] Registers { get; }
         ushort ProgramCounter { get; set; }
         ushort RegisterI { get; set; }
         byte DelayTimer { get; set; }
@@ -17,7 +17,7 @@ namespace Chip8Console.CPU
         IKeyboard Keyboard { get; }
         bool DrawFlag { get; set; }
         IMemory Memory { get; }
-
+        
         byte GetFromRegister(ushort address);
         void Load(byte[] program);
         void Start();

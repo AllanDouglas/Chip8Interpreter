@@ -10,11 +10,13 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-            var y = (opcode.value & 0x00F0) >> 4;
-            var x = (opcode.value & 0x0F00) >> 8;
-            cpu.StoreIntoRegister(0xF, (cpu.Registers[x] - cpu.Registers[y] < 0) ? 1 : 0);
-            cpu.Registers[x] -= cpu.Registers[y];
-            cpu.ProgramCounter += 2;
+            var y = (ushort)((opcode.value & 0x00F0) >> 4);
+            var x = (ushort)((opcode.value & 0x0F00) >> 8);
+            var currentX = cpu.GetFromRegister(x);
+            var currenty = cpu.GetFromRegister(y);
+
+            cpu.StoreIntoRegister(0xF, (currentX > currenty) ? 1 : 0);
+            cpu.StoreIntoRegister(x, (byte)(currentX - currenty));
 
         }
     }
