@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Chip8Console\chip8Console.csproj" />
+    <ProjectReference Include="..\Chip8Console\Chip8Console.csproj" />
   </ItemGroup>
 
 </Project>
