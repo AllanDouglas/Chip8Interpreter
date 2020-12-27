@@ -1,26 +1,41 @@
 using System;
+using System.Text;
 
 namespace Chip8Console.Video
 {
     public class ConsoleDisplay
     {
         private readonly IGPU gpu;
+        private StringBuilder str;
 
-        public ConsoleDisplay(IGPU gpu) => this.gpu = gpu;
+        public ConsoleDisplay(IGPU gpu)
+        {
+            this.gpu = gpu;
+            str = new StringBuilder();
+        }
 
-        public void Clear() => Console.Clear();
+        public void Clear()
+        {
+            Console.Clear();
+            str.Clear();
+        }
 
         public void Paint()
         {
-            for (int y = gpu.Rows - 1; y > -1; y--)
+
+            for (var y = 0; y < gpu.Rows; y++)
             {
                 for (int x = 0; x < gpu.Columns; x++)
                 {
                     var index = x + (y * gpu.Columns);
-                    Console.Write(gpu.Read((ushort)index) > 0 ? "X" : string.Empty);
+                    byte pixel = gpu.Read((ushort)index);
+                    str.Append(pixel > 0 ? "X" : ".");
                 }
-                Console.WriteLine();
+                str.AppendLine();
             }
+
+            Console.Write(str.ToString());
+
         }
     }
 }
