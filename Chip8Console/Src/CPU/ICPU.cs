@@ -17,7 +17,8 @@ namespace Chip8Console.CPU
         IKeyboard Keyboard { get; }
         bool DrawFlag { get; set; }
         IMemory Memory { get; }
-        
+        byte[] Registers { get; }
+
         byte GetFromRegister(ushort address);
         void Load(byte[] program);
         void Start();

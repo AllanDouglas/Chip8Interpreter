@@ -11,7 +11,6 @@ namespace Chip8Console.CPU
         private readonly IGPU gpu;
         private readonly IKeyboard keyboard;
         private IOpCodeDecoder decoder;
-        public readonly byte[] registers = new byte[16];
 
         public Chip8CPU(IMemory memory, IGPU gpu, IKeyboard keyboard)
         {
@@ -19,7 +18,6 @@ namespace Chip8Console.CPU
             this.gpu = gpu;
             this.keyboard = keyboard;
         }
-
         public byte StackPointer { get; set; }
         public ushort[] Stack { get; private set; } = new ushort[16];
         public ushort ProgramCounter { get; set; }
@@ -29,16 +27,11 @@ namespace Chip8Console.CPU
         public IGPU Gpu => gpu;
         public IKeyboard Keyboard => keyboard;
         public bool DrawFlag { get; set; }
-
         public IMemory Memory => memory;
+        public byte[] Registers { get; } = new byte[16];
 
-        public byte GetFromRegister(ushort address) => registers[address];
-        public void StoreIntoRegister(ushort address, byte value)
-        {
-            if (IsDebug())
-                Console.WriteLine($"Changing {address} from {registers[address]}, to {value}");
-            registers[address] = value;
-        }
+        public byte GetFromRegister(ushort address) => Registers[address];
+        public void StoreIntoRegister(ushort address, byte value) => Registers[address] = value;
 
         public void Start()
         {
@@ -48,9 +41,9 @@ namespace Chip8Console.CPU
             DelayTimer = 0x0;
             StackPointer = 0x0;
 
-            for (var i = 0; i < registers.Length; i++)
+            for (var i = 0; i < Registers.Length; i++)
             {
-                registers[i] = default;
+                Registers[i] = default;
             }
 
             for (var i = 0; i < Stack.Length; i++)
@@ -94,18 +87,12 @@ namespace Chip8Console.CPU
 
         public void Tick()
         {
-
-
             DrawFlag = false;
             // Fetch opcode
             var opcode = GetOpcode();
             // Decode opcode
             var executer = decoder.Decode(opcode);
             // Execute opcode
-            if (IsDebug())
-            {
-                Console.WriteLine($"Executer {executer}, opcode {opcode}");
-            }
             executer.Execute(opcode);
 
             // Update timers
@@ -123,12 +110,6 @@ namespace Chip8Console.CPU
             // go to next instructiuon
             ProgramCounter += 2;
         }
-
-        private static bool IsDebug()
-        {
-            return false; //Environment.GetEnvironmentVariable("DEBUG") == "true";
-        }
-
         private OpCode GetOpcode()
         {
             var first = Memory.Read(ProgramCounter) << 8;
@@ -142,20 +123,27 @@ namespace Chip8Console.CPU
         {
             return new OpCodeDecoder(new OpCode(0xF000), this)
             {
+                new OpCodeFX07(this),
+                new OpCodeFX15(this),
                 new OpCodeFX1E(this),
                 new OpCodeFX29(this),
+                new OpCodeFX55(this),
                 new OpCodeFX65(this),
-                new OpCodeFX07(this),
-                new OpCodeFX15(this)
             };
         }
         private OpCodeDecoder CreateRegisterOperationsDecoder()
         {
             return new OpCodeDecoder(new OpCode(0x8000), this)
             {
+                new OpCode8XY0(this),
+                new OpCode8XY1(this),
+                new OpCode8XY2(this),
+                new OpCode8XY3(this),
                 new OpCode8XY4(this),
                 new OpCode8XY5(this),
-                new OpCode8XY0(this)
+                new OpCode8XY6(this),
+                new OpCode8XY7(this),
+                new OpCode8XYE(this)
             };
         }
 

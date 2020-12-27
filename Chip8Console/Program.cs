@@ -38,7 +38,7 @@ namespace Chip8Console
                     video.Paint();
                 }
 
-                Thread.Sleep(32);
+                Thread.Sleep(16);
             }
 
         }
