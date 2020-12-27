@@ -34,4 +34,5 @@ msbuild.wrn
 # Visual Studio 2015
 .vs/
 # chip 8 binary file
+**/[Rr]oms/
 *.ch8
