@@ -15,7 +15,7 @@ namespace Chip8Console.CPU
             var x = (opcode.value & 0x0F00) >> 8;
             var vx = cpu.Registers[x];
 
-            if (vx < cpu.Keyboard.Keys.Length && cpu.Keyboard.Keys[vx] == 0)
+            if (vx < cpu.Keyboard.KeyBinds.Length && cpu.Keyboard.KeyBinds[vx] == 0)
                 cpu.ProgramCounter += 2;
 
         }

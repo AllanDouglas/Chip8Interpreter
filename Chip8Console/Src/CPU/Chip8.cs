@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics;
+using System.Threading;
 using Chip8Console.Keyboard;
 using Chip8Console.Memory;
 using Chip8Console.Video;
@@ -7,16 +9,20 @@ namespace Chip8Console.CPU
 {
     public class Chip8CPU : ICPU
     {
+        private readonly static TimeSpan _60Hz = new(TimeSpan.TicksPerSecond / 60);
         private readonly IMemory memory;
         private readonly IGPU gpu;
         private readonly IKeyboard keyboard;
         private IOpCodeDecoder decoder;
+        private Stopwatch sw;
+        private TimeSpan lastTime;
 
         public Chip8CPU(IMemory memory, IGPU gpu, IKeyboard keyboard)
         {
             this.memory = memory;
             this.gpu = gpu;
             this.keyboard = keyboard;
+            sw = new Stopwatch();
         }
         public byte StackPointer { get; set; }
         public ushort[] Stack { get; private set; } = new ushort[16];
@@ -78,6 +84,9 @@ namespace Chip8Console.CPU
                 OpCodeDecoder.CreateDecoderFor(new OpCodeBNNN(this), this),
                 OpCodeDecoder.CreateDecoderFor(new OpCodeCXNN(this), this)
             );
+
+            lastTime = new TimeSpan(DateTime.Now.Ticks);
+            sw.Start();
         }
 
         public void Load(byte[] program)
@@ -88,18 +97,26 @@ namespace Chip8Console.CPU
 
         public void Tick()
         {
-            DrawFlag = false;
+
             // Fetch opcode
             var opcode = GetOpcode();
+            // go to next instruction
+            ProgramCounter += 2;
             // Decode opcode
             var executer = decoder.Decode(opcode);
             // Execute opcode
             executer.Execute(opcode);
-            // go to next instruction
-            if (executer.SkipIncrement == false)
-                ProgramCounter += 2;
+            
+            var dt = new TimeSpan(DateTime.Now.Ticks) - lastTime;
+            while (dt >= _60Hz)
+            {
+                UpdateTimers();
+                dt -= _60Hz;
+            }
+        }
 
-            // Update timers
+        private void UpdateTimers()
+        {
             if (DelayTimer > 0)
                 --DelayTimer;
 
@@ -111,8 +128,8 @@ namespace Chip8Console.CPU
                 }
                 --SoundTimer;
             }
-
         }
+
         private OpCode GetOpcode()
         {
             var first = Memory.Read(ProgramCounter) << 8;
@@ -134,6 +151,7 @@ namespace Chip8Console.CPU
                 new OpCodeFX33(this),
                 new OpCodeFX55(this),
                 new OpCodeFX65(this),
+                new OpCodeFX0A(this),
             };
         }
         private OpCodeDecoder CreateRegisterOperationsDecoder()

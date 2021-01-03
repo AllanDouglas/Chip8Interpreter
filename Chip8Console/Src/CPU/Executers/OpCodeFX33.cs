@@ -13,9 +13,13 @@ namespace Chip8Console.CPU
             var x = (opcode.value & 0x0f00) >> 8;
             var vx = cpu.Registers[x];
 
-            this.cpu.Memory.Store(cpu.RegisterI, (byte)(vx / 100));
-            this.cpu.Memory.Store((byte)(cpu.RegisterI + 1), (byte)(vx / 10 % 10));
-            this.cpu.Memory.Store((byte)(cpu.RegisterI + 2), (byte)(vx % 100 % 10));
+            byte value = (byte)(vx / 100 % 10);
+            byte value1 = (byte)(vx / 10 % 10);
+            byte value2 = (byte)(vx % 10);
+
+            cpu.Memory.Store(cpu.RegisterI, value);
+            cpu.Memory.Store((ushort)(cpu.RegisterI + 1), value1);
+            cpu.Memory.Store((ushort)(cpu.RegisterI + 2), value2);
 
         }
     }

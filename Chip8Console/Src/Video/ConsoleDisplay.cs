@@ -1,9 +1,8 @@
 using System;
 using System.Text;
-
 namespace Chip8Console.Video
 {
-    public class ConsoleDisplay
+    public class ConsoleDisplay : IDisplay
     {
         private readonly IGPU gpu;
         private readonly StringBuilder str;
@@ -14,15 +13,13 @@ namespace Chip8Console.Video
             str = new StringBuilder();
         }
 
-        public void Clear()
+        private void Clear()
         {
-            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DEBUG")))
-                Console.Clear();
-
+            Console.Clear();
             str.Clear();
         }
 
-        public void Paint()
+        public void Draw()
         {
             Clear();
             for (var y = 0; y < gpu.Rows; y++)
@@ -31,7 +28,7 @@ namespace Chip8Console.Video
                 {
                     var index = x + (y * gpu.Columns);
                     byte pixel = gpu.Read((ushort)index);
-                    str.Append(pixel > 0 ? "XX" : "..");
+                    str.Append(pixel > 0 ? "  " : "XX");
                 }
                 str.AppendLine();
             }

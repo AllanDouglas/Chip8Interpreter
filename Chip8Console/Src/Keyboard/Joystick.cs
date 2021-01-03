@@ -1,67 +1,93 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace Chip8Console.Keyboard
 {
     public class Joystick : IKeyboard
     {
-        Dictionary<ConsoleKey, byte> binds;
-        public byte[] Keys { get; } = new byte[16];
-        public bool HasKeyPressed { get; private set; }
+        public const int KEY_PRESSED = 0x8000;
+        private const int KEY_KEYDOWN = 0x0100;
+        private const int KEY_UP = 0x0101;
+        readonly Dictionary<Keys, byte> binds;
+        public byte[] KeyBinds { get; } = new byte[16];
+        public bool HasKeyPressed
+        {
+            get
+            {
+                foreach (var keys in KeyBinds)
+                {
+                    if (keys > 0) return true;
+                }
+                return false;
+            }
+        }
         public byte LastPressedKey { get; private set; }
 
         public Joystick()
         {
+
             binds = new()
             {
-                { ConsoleKey.NumPad1, 0x1 },
-                { ConsoleKey.NumPad2, 0x2 },
-                { ConsoleKey.NumPad3, 0x3 },
-                { ConsoleKey.NumPad4, 0xC },
+                { Keys.Up, 0x1 },
+                { Keys.Down, 0x2 },
+                { Keys.Right, 0x3 },
+                { Keys.Left, 0xC },
 
-                { ConsoleKey.Q, 0x4 },
-                { ConsoleKey.W, 0x5 },
-                { ConsoleKey.E, 0x6 },
-                { ConsoleKey.R, 0xD },
+                { Keys.Q, 0x4 },
+                { Keys.W, 0x5 },
+                { Keys.E, 0x6 },
+                { Keys.R, 0xD },
 
-                { ConsoleKey.A, 0x7 },
-                { ConsoleKey.S, 0x8 },
-                { ConsoleKey.D, 0x9 },
-                { ConsoleKey.F, 0xE },
+                { Keys.A, 0x7 },
+                { Keys.S, 0x8 },
+                { Keys.D, 0x9 },
+                { Keys.F, 0xE },
 
-                { ConsoleKey.Z, 0xA },
-                { ConsoleKey.X, 0x0 },
-                { ConsoleKey.C, 0xB },
-                { ConsoleKey.V, 0xF }
+                { Keys.Z, 0xA },
+                { Keys.X, 0x0 },
+                { Keys.C, 0xB },
+                { Keys.V, 0xF }
             };
 
         }
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        private static extern short GetKeyState(int keyCode);
+        public static bool IsKeyDown(Keys key)
+        {
+            return Convert.ToBoolean(GetKeyState((int)key) & (KEY_KEYDOWN | KEY_PRESSED));
+        }
+
+        public static bool IsKeyUp(Keys key)
+        {
+            return (GetKeyState((int)key) & KEY_UP) == KEY_UP;
+        }
+
         public void Update()
         {
-            if (Console.KeyAvailable == false)
+            foreach (var bind in binds)
             {
-
-                Clear();
-                return;
+                KeyBinds[bind.Value] = IsKeyDown(bind.Key) ? 1 : 0;
+                if (KeyBinds[bind.Value] > 0)
+                {
+                    LastPressedKey = bind.Value;
+                }
             }
-
-            var keyinfo = Console.ReadKey();
-            if (binds.TryGetValue(keyinfo.Key, out var bind) == false) return;
-
-            Keys[bind] = 1;
-            LastPressedKey = bind;
-            Console.WriteLine($"{keyinfo.KeyChar}, {bind}");
         }
 
-        private void Clear()
+        public override string ToString()
         {
-            HasKeyPressed = false;
-            LastPressedKey = 0xFF;
-            for (int i = 0; i < Keys.Length; i++)
+            var str = string.Empty;
+            for (int i = 0; i < KeyBinds.Length; i++)
             {
-                Keys[i] = 0xFF;
+                byte value = KeyBinds[i];
+                str += $"{i:x2} = {value} ";
             }
+
+            return str;
         }
+
     }
 }

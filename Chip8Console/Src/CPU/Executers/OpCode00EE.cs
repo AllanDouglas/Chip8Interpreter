@@ -4,7 +4,6 @@ namespace Chip8Console.CPU
     {
         public OpCode00EE(ICPU cpu) : base(cpu)
         {
-            SkipIncrement = true;
         }
 
         public override OpCode OpCode => new(0x00EE);

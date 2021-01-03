@@ -12,10 +12,12 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-            var x = opcode.value & 0x0F00;
 
             if (cpu.Keyboard.HasKeyPressed)
+            {
+                var x = (opcode.value & 0x0F00) >> 8;
                 cpu.Registers[x] = cpu.Keyboard.LastPressedKey;
+            }
             else
                 cpu.ProgramCounter -= 2;
 

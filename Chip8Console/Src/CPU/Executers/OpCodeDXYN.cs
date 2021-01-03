@@ -22,26 +22,23 @@ namespace Chip8Console.CPU
             for (int line = 0; line < height; line++)
             {
                 var pixel = cpu.Memory.Read((ushort)(cpu.RegisterI + line));
-                
+
                 for (int column = 0; column < 8; column++)
                 {
-                    if ((pixel & (0x80 >> column)) != 0)
-                    {
+                    if ((pixel & (0x80 >> column)) == 0) continue;
+                    
+                    var x = posX + column;
+                    var y = posY + line;
 
-                        var x = posX + column;
-                        var y = posY + line;
+                    var index = (ushort)(x + (y * cpu.Gpu.Columns));
 
-                        var index = (ushort)(x + (y * cpu.Gpu.Columns));
+                    var currentPixel = cpu.Gpu.Read(index);
 
-                        var currentPixel = cpu.Gpu.Read(index);
+                    if (currentPixel == 1)
+                        cpu.StoreIntoRegister(0xf, 1);
 
-                        if (currentPixel == 1)
-                            cpu.StoreIntoRegister(0xf, 1);
-
-                        currentPixel ^= 1;
-                        cpu.Gpu.Store(index, currentPixel);
-
-                    }
+                    currentPixel ^= 1;
+                    cpu.Gpu.Store(index, currentPixel);
                 }
             }
 
