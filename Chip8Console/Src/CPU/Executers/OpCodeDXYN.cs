@@ -15,7 +15,7 @@ namespace Chip8Console.CPU
             var posX = cpu.GetFromRegister((ushort)((opcode.value & 0x0F00) >> 8));
             var posY = cpu.GetFromRegister((ushort)((opcode.value & 0x00F0) >> 4));
             var height = (ushort)(opcode.value & 0x000F);
-
+            cpu.DrawFlag = true;
 
             cpu.StoreIntoRegister(0xF, 0);
 
@@ -26,7 +26,7 @@ namespace Chip8Console.CPU
                 for (int column = 0; column < 8; column++)
                 {
                     if ((pixel & (0x80 >> column)) == 0) continue;
-                    
+
                     var x = posX + column;
                     var y = posY + line;
 
@@ -41,8 +41,6 @@ namespace Chip8Console.CPU
                     cpu.Gpu.Store(index, currentPixel);
                 }
             }
-
-            cpu.DrawFlag = true;
         }
     }
 }
