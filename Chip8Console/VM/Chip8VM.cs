@@ -13,7 +13,7 @@ namespace Chip8Console.VM
     public class Chip8VM
     {
 
-        public static void Run(string programPath)
+        public static void Run(string programPath, int frameTarget = 120)
         {
             if (string.IsNullOrEmpty(programPath))
                 throw new ArgumentNullException($"{nameof(programPath)} can't be null");
@@ -26,7 +26,7 @@ namespace Chip8Console.VM
             cpu.Start();
             cpu.Load(program);
 
-            var cpuClock = new TimeSpan(TimeSpan.TicksPerSecond / 540);
+            var cpuClock = new TimeSpan(TimeSpan.TicksPerSecond / frameTarget);
 
             RunCPU(cpu, video, cpuClock);
             Application.Run(video);
@@ -36,18 +36,21 @@ namespace Chip8Console.VM
         {
             Task.Run(() =>
             {
-                var sw = Stopwatch.StartNew();
+                var lastUpdate = DateTime.Now;
                 while (true)
                 {
-                    if (sw.ElapsedTicks < cpuClock.Ticks) continue;
-                    sw.Restart();
+                    var dt = DateTime.Now - lastUpdate;
+                    
+                    if (dt.Ticks < cpuClock.Ticks) continue;
+                    lastUpdate = DateTime.Now;
+                    
+                    cpu.Keyboard.Update();
                     cpu.Tick();
                     if (cpu.DrawFlag)
                     {
                         cpu.DrawFlag = false;
                         video.Draw();
                     }
-                    cpu.Keyboard.Update();
                 }
             });
         }

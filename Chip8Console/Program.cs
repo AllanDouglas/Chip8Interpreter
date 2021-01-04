@@ -1,1 +1,1 @@
-﻿Chip8Console.VM.Chip8VM.Run(args[0]);
+﻿Chip8Console.VM.Chip8VM.Run(args[0], (args.Length > 1)? int.Parse(args[1]) : 540);
