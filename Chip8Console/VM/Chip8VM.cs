@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -25,28 +26,28 @@ namespace Chip8Console.VM
             cpu.Start();
             cpu.Load(program);
 
-            RunCPU(cpu, video, new TimeSpan(1000 / 60));
-            
-            Application.Run(video);
+            var cpuClock = new TimeSpan(TimeSpan.TicksPerSecond / 540);
 
+            RunCPU(cpu, video, cpuClock);
+            Application.Run(video);
         }
 
         private static void RunCPU(Chip8CPU cpu, WindowsVideo video, TimeSpan cpuClock)
         {
-            Task.Run(async () =>
+            Task.Run(() =>
             {
+                var sw = Stopwatch.StartNew();
                 while (true)
                 {
+                    if (sw.ElapsedTicks < cpuClock.Ticks) continue;
+                    sw.Restart();
                     cpu.Tick();
-
                     if (cpu.DrawFlag)
                     {
                         cpu.DrawFlag = false;
                         video.Draw();
                     }
-
                     cpu.Keyboard.Update();
-                    await Task.Delay(cpuClock);
                 }
             });
         }

@@ -106,7 +106,7 @@ namespace Chip8Console.CPU
             var executer = decoder.Decode(opcode);
             // Execute opcode
             executer.Execute(opcode);
-            
+
             var dt = new TimeSpan(DateTime.Now.Ticks) - lastTime;
             while (dt >= _60Hz)
             {
