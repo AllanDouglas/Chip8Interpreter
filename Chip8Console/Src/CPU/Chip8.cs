@@ -13,7 +13,6 @@ namespace Chip8Console.CPU
         private readonly IGPU gpu;
         private readonly IKeyboard keyboard;
         private IOpCodeDecoder decoder;
-        private Stopwatch sw;
         private TimeSpan lastTime;
         private TimeSpan accumulator;
 
@@ -22,7 +21,6 @@ namespace Chip8Console.CPU
             this.memory = memory;
             this.gpu = gpu;
             this.keyboard = keyboard;
-            sw = new Stopwatch();
         }
         public byte StackPointer { get; set; }
         public ushort[] Stack { get; private set; } = new ushort[16];
@@ -86,7 +84,6 @@ namespace Chip8Console.CPU
             );
 
             lastTime = new TimeSpan(DateTime.Now.Ticks);
-            sw.Start();
         }
 
         public void Load(byte[] program)
