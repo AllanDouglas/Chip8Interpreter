@@ -12,7 +12,7 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-            var x = (opcode.value & 0x0F00) >> 8;
+            var x = opcode.X;
             var vx = cpu.Registers[x];
 
             if (vx < cpu.Keyboard.KeyBinds.Length && cpu.Keyboard.KeyBinds[vx] == 0)

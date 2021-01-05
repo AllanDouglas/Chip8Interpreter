@@ -45,18 +45,17 @@ namespace Chip8Console.VM
                     lastUpdate = DateTime.Now;
                     accumulator += dt.TotalSeconds;
 
-                    cpu.Keyboard.Update();
                     while (accumulator > cpuClock.TotalSeconds)
                     {
                         cpu.Tick();
+                        if (cpu.DrawFlag)
+                        {
+                            cpu.DrawFlag = false;
+                            video.Draw();
+                        }
+                        cpu.Keyboard.Update();
                         accumulator -= cpuClock.TotalSeconds;
                     }
-                    if (cpu.DrawFlag)
-                    {
-                        cpu.DrawFlag = false;
-                        video.Draw();
-                    }
-
                 }
             });
         }

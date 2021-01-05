@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Threading;
 using Chip8Console.Keyboard;
 using Chip8Console.Memory;
 using Chip8Console.Video;
@@ -9,13 +8,14 @@ namespace Chip8Console.CPU
 {
     public class Chip8CPU : ICPU
     {
-        private readonly static TimeSpan _60Hz = new(TimeSpan.TicksPerSecond / 60);
+        private readonly static TimeSpan _60Hz = TimeSpan.FromMilliseconds(1000 / 60);
         private readonly IMemory memory;
         private readonly IGPU gpu;
         private readonly IKeyboard keyboard;
         private IOpCodeDecoder decoder;
         private Stopwatch sw;
         private TimeSpan lastTime;
+        private TimeSpan accumulator;
 
         public Chip8CPU(IMemory memory, IGPU gpu, IKeyboard keyboard)
         {
@@ -107,12 +107,15 @@ namespace Chip8Console.CPU
             // Execute opcode
             executer.Execute(opcode);
 
-            var dt = new TimeSpan(DateTime.Now.Ticks) - lastTime;
-            while (dt >= _60Hz)
+            var now = new TimeSpan(DateTime.Now.Ticks);
+            var dt = now - lastTime;
+            lastTime = now;
+            accumulator += dt;
+
+            while (accumulator >= _60Hz)
             {
                 UpdateTimers();
-                dt -= _60Hz;
-                lastTime = new TimeSpan(DateTime.Now.Ticks);
+                accumulator -= _60Hz;
             }
         }
 

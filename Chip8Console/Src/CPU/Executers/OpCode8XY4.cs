@@ -9,17 +9,12 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-
-            var y = (ushort)((opcode.value & 0x00F0) >> 4);
-            var x = (ushort)((opcode.value & 0x0F00) >> 8);
-
-            var currentX = cpu.GetFromRegister(x);
+            var currentX = cpu.GetFromRegister(opcode.X);
+            var currentY = cpu.GetFromRegister(opcode.Y);
 
             var complementTo255 = 0xFF - currentX;
-            byte currentY = cpu.GetFromRegister(y);
             cpu.StoreIntoRegister(0xF, currentY > complementTo255 ? 1 : 0);
-
-            cpu.StoreIntoRegister(x, (byte)(currentX + currentY));
+            cpu.StoreIntoRegister(opcode.X, (byte)(currentX + currentY));
         }
 
     }

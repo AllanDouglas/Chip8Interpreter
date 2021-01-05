@@ -13,7 +13,7 @@ namespace Chip8Console.CPU
         {
             cpu.Stack[cpu.StackPointer] = cpu.ProgramCounter;
             ++cpu.StackPointer;
-            cpu.ProgramCounter = (ushort)(opcode.value & 0x0FFF);
+            cpu.ProgramCounter = opcode.Address;
         }
     }
 }

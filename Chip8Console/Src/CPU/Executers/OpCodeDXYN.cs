@@ -12,9 +12,9 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-            var posX = cpu.GetFromRegister((ushort)((opcode.value & 0x0F00) >> 8));
-            var posY = cpu.GetFromRegister((ushort)((opcode.value & 0x00F0) >> 4));
-            var height = (ushort)(opcode.value & 0x000F);
+            var posX = cpu.GetFromRegister(opcode.X);
+            var posY = cpu.GetFromRegister(opcode.Y);
+            var height = opcode.Constant4;
             cpu.DrawFlag = true;
 
             cpu.StoreIntoRegister(0xF, 0);

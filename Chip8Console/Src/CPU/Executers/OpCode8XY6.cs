@@ -12,12 +12,12 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-            var x = (opcode.value & 0x0F00) >> 8;
 
-            cpu.StoreIntoRegister(0xF, (byte)(cpu.GetFromRegister((ushort)x) & 0b0001));
+            var leastSignificantBit = (cpu.GetFromRegister(opcode.X) & 0b0001) != 0 ? 1 : 0;
+            cpu.StoreIntoRegister(0xF, (byte)leastSignificantBit);
 
-            var VxShitRight = cpu.GetFromRegister((ushort)x) >> 1;
-            cpu.StoreIntoRegister((ushort)x, (byte)VxShitRight);
+            var VxShitRight = cpu.GetFromRegister(opcode.X) >> 1;
+            cpu.StoreIntoRegister(opcode.X, (byte)VxShitRight);
         }
     }
 }

@@ -10,9 +10,7 @@ namespace Chip8Console.CPU
         public override OpCode OpCode => new(0xF018);
         public override void Execute(OpCode opcode)
         {
-            var x = (opcode.value & 0x0f00) >> 8;
-            cpu.SoundTimer = cpu.Registers[x];
-
+            cpu.SoundTimer = cpu.Registers[opcode.X];
         }
     }
 }

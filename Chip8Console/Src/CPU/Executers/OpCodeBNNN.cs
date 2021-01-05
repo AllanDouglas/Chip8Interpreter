@@ -12,8 +12,7 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-            var constant = opcode.value & 0x0FFF;
-            cpu.ProgramCounter = (ushort)(constant + cpu.GetFromRegister(0));
+            cpu.ProgramCounter = (ushort)(opcode.Address + cpu.GetFromRegister(0));
         }
     }
 }

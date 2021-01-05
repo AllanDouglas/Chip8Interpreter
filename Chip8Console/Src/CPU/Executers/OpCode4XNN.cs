@@ -11,11 +11,9 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-            var x = (ushort)((opcode.value & 0x0F00) >> 8);
-            var Vx = cpu.GetFromRegister(x);
-            var constant = opcode.value & 0x0FF;
+            var Vx = cpu.GetFromRegister(opcode.X);
 
-            if (Vx != constant)
+            if (Vx != opcode.Constant8)
             {
                 cpu.ProgramCounter += 2;
             }

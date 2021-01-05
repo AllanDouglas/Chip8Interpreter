@@ -15,8 +15,7 @@ namespace Chip8Console.CPU
 
             if (cpu.Keyboard.HasKeyPressed)
             {
-                var x = (opcode.value & 0x0F00) >> 8;
-                cpu.Registers[x] = cpu.Keyboard.LastPressedKey;
+                cpu.Registers[opcode.X] = cpu.Keyboard.LastPressedKey;
             }
             else
                 cpu.ProgramCounter -= 2;

@@ -12,9 +12,7 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-            var x = (opcode.value & 0x0f00) >> 8;
-
-            cpu.StoreIntoRegister((ushort)x, cpu.DelayTimer);
+            cpu.StoreIntoRegister(opcode.X, cpu.DelayTimer);
         }
     }
 }

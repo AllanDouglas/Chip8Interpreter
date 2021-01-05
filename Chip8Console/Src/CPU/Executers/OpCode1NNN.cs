@@ -10,7 +10,7 @@ namespace Chip8Console.CPU
         public override OpCode Filter => new(0xF000);
         public override void Execute(OpCode opCode)
         {
-            cpu.ProgramCounter = (ushort)(opCode.value & 0x0FFF);
+            cpu.ProgramCounter = opCode.Address;
         }
     }
 }

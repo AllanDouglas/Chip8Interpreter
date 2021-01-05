@@ -8,7 +8,7 @@ namespace Chip8Console.CPU
         public OpCodeANNN(ICPU cpu) : base(cpu) { }
         public override void Execute(OpCode opcode)
         {
-            cpu.RegisterI = (ushort)(opcode.value & 0x0FFF);
+            cpu.RegisterI = opcode.Address;
         }
     }
 }

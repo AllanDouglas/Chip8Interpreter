@@ -11,10 +11,8 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-            var x = (ushort)((opcode.value & 0x0F00) >> 8);
-            var y = (ushort)((opcode.value & 0x00F0) >> 4);
-            var Vx = cpu.GetFromRegister(x);
-            var Vy = cpu.GetFromRegister(y);
+            var Vx = cpu.GetFromRegister(opcode.X);
+            var Vy = cpu.GetFromRegister(opcode.Y);
 
             if (Vx == Vy)
             {

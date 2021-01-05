@@ -10,13 +10,11 @@ namespace Chip8Console.CPU
         public override OpCode OpCode => new(0xF055);
         public override void Execute(OpCode opcode)
         {
-            var x = (opcode.value & 0x0f00) >> 8;
-
-            for (ushort i = 0; i <= x; i++)
+            for (ushort i = 0; i <= opcode.X; i++)
             {
                 cpu.Memory.Store((ushort)(cpu.RegisterI + i), cpu.GetFromRegister(i));
             }
-            // cpu.RegisterI += (ushort)(x + 1);
+            cpu.RegisterI += (ushort)(opcode.X + 1);
         }
     }
 }
