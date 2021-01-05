@@ -112,6 +112,7 @@ namespace Chip8Console.CPU
             {
                 UpdateTimers();
                 dt -= _60Hz;
+                lastTime = new TimeSpan(DateTime.Now.Ticks);
             }
         }
 

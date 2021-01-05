@@ -26,7 +26,7 @@ namespace Chip8Console.VM
             cpu.Start();
             cpu.Load(program);
 
-            var cpuClock = new TimeSpan(TimeSpan.TicksPerSecond / frameTarget);
+            var cpuClock = TimeSpan.FromMilliseconds(1000 / frameTarget);
 
             RunCPU(cpu, video, cpuClock);
             Application.Run(video);
@@ -37,27 +37,33 @@ namespace Chip8Console.VM
             Task.Run(() =>
             {
                 var lastUpdate = DateTime.Now;
+                var accumulator = 0d;
                 while (true)
                 {
-                    var dt = DateTime.Now - lastUpdate;
-                    
-                    if (dt.Ticks < cpuClock.Ticks) continue;
+                    var now = DateTime.Now;
+                    var dt = now - lastUpdate;
                     lastUpdate = DateTime.Now;
-                    
+                    accumulator += dt.TotalSeconds;
+
                     cpu.Keyboard.Update();
-                    cpu.Tick();
+                    while (accumulator > cpuClock.TotalSeconds)
+                    {
+                        cpu.Tick();
+                        accumulator -= cpuClock.TotalSeconds;
+                    }
                     if (cpu.DrawFlag)
                     {
                         cpu.DrawFlag = false;
                         video.Draw();
                     }
+
                 }
             });
         }
 
         private static byte[] ReadProgram(string path)
         {
-            var reader = new BinaryReader(File.OpenRead(path));
+            using var reader = new BinaryReader(File.OpenRead(path));
             var program = new byte[reader.BaseStream.Length];
             var index = 0;
             while (reader.BaseStream.Position < reader.BaseStream.Length)
