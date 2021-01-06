@@ -12,7 +12,18 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-            cpu.RegisterI += cpu.GetFromRegister(opcode.X);
+            var vx = cpu.Registers[opcode.X];
+            
+            if (cpu.RegisterI + vx > cpu.Memory.Length)
+            {
+                cpu.Registers[0xf] = 1;
+            }
+            else
+            {
+                cpu.Registers[0xf] = 0;
+            }
+
+            cpu.RegisterI += vx;
         }
     }
 }

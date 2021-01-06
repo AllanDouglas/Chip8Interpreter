@@ -78,9 +78,9 @@ namespace Chip8Console.CPU
                 OpCodeDecoder.CreateDecoderFor(new OpCode7XNN(this), this),
                 OpCodeDecoder.CreateDecoderFor(new OpCode9XY0(this), this),
                 OpCodeDecoder.CreateDecoderFor(new OpCodeANNN(this), this),
-                OpCodeDecoder.CreateDecoderFor(new OpCodeDXYN(this), this),
                 OpCodeDecoder.CreateDecoderFor(new OpCodeBNNN(this), this),
-                OpCodeDecoder.CreateDecoderFor(new OpCodeCXNN(this), this)
+                OpCodeDecoder.CreateDecoderFor(new OpCodeCXNN(this), this),
+                OpCodeDecoder.CreateDecoderFor(new OpCodeDXYN(this), this)
             );
 
             lastTime = new TimeSpan(DateTime.Now.Ticks);
@@ -94,7 +94,6 @@ namespace Chip8Console.CPU
 
         public void Tick()
         {
-
             // Fetch opcode
             var opcode = GetOpcode();
             // go to next instruction

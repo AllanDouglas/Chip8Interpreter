@@ -12,12 +12,9 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-
-            var mostSignificantBit = (byte)((cpu.GetFromRegister(opcode.X) & 0b1000) != 0 ? 1 : 0);
-            cpu.StoreIntoRegister(0xF, mostSignificantBit);
-
-            var VxShitLeft = cpu.GetFromRegister(opcode.X) << 1;
-            cpu.StoreIntoRegister(opcode.X, (byte)VxShitLeft);
+            var mostSignificantBit = (byte)((cpu.GetFromRegister(opcode.X) & 0x80) >> 7);
+            cpu.Registers[0xF] = mostSignificantBit;
+            cpu.Registers[opcode.X] <<= 1;
         }
     }
 }

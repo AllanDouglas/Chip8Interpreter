@@ -70,6 +70,7 @@ namespace Chip8Console.Keyboard
             foreach (var bind in binds)
             {
                 KeyBinds[bind.Value] = IsKeyDown(bind.Key) ? 1 : 0;
+                
                 if (KeyBinds[bind.Value] > 0)
                 {
                     LastPressedKey = bind.Value;

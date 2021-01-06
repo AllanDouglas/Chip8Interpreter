@@ -12,7 +12,7 @@ namespace Chip8Console.CPU
         {
             for (ushort i = 0; i <= opcode.X; i++)
             {
-                cpu.Memory.Store((ushort)(cpu.RegisterI + i), cpu.GetFromRegister(i));
+                cpu.Memory.Store((ushort)(cpu.RegisterI + i), cpu.Registers[i]);
             }
             cpu.RegisterI += (ushort)(opcode.X + 1);
         }

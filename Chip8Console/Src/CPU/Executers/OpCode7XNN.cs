@@ -11,8 +11,7 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-            cpu.StoreIntoRegister(opcode.X, 
-                (byte)(cpu.GetFromRegister(opcode.X) + opcode.Constant8));
+            cpu.Registers[opcode.X] += opcode.Constant8;
         }
     }
 }
