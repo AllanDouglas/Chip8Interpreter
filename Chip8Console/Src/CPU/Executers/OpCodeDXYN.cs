@@ -31,15 +31,15 @@ namespace Chip8Console.CPU
                     var x = posX + column;
                     var y = posY + line;
 
-                    if (x > cpu.Gpu.Columns)
-                        x %= cpu.Gpu.Columns;
+                    if (x >= cpu.Gpu.Columns)
+                        x %= cpu.Gpu.Columns - 1;
 
-                    if (y > cpu.Gpu.Rows)
-                        x %= cpu.Gpu.Rows;
+                    if (y >= cpu.Gpu.Rows)
+                        y %= cpu.Gpu.Rows - 1;
 
                     var index = (ushort)(x + (y * cpu.Gpu.Columns));
 
-                    if (index >= gpuLength) continue;
+                    // if (index >= gpuLength) continue;
 
                     var currentPixel = cpu.Gpu.Read(index);
 
