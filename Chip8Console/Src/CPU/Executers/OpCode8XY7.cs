@@ -12,7 +12,7 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-            cpu.StoreIntoRegister(0xF, cpu.Registers[opcode.Y] >= cpu.Registers[opcode.X] ? 1 : 0);
+            cpu.Registers[0xF] = cpu.Registers[opcode.Y] >= cpu.Registers[opcode.X] ? 1 : 0;
             cpu.Registers[opcode.X] = (byte)(cpu.Registers[opcode.Y] - cpu.Registers[opcode.X]);
         }
     }

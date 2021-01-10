@@ -1,12 +1,11 @@
 using System;
-using System.Diagnostics;
 using Chip8Console.Keyboard;
 using Chip8Console.Memory;
 using Chip8Console.Video;
 
 namespace Chip8Console.CPU
 {
-    public class Chip8CPU : ICPU
+    public partial class Chip8CPU : ICPU
     {
         private readonly static TimeSpan _60Hz = TimeSpan.FromMilliseconds(1000 / 60);
         private readonly IMemory memory;
@@ -15,7 +14,9 @@ namespace Chip8Console.CPU
         private IOpCodeDecoder decoder;
         private TimeSpan lastTime;
         private TimeSpan accumulator;
-
+#if DEBUG
+        private int ticksCount;
+#endif
         public Chip8CPU(IMemory memory, IGPU gpu, IKeyboard keyboard)
         {
             this.memory = memory;
@@ -39,11 +40,42 @@ namespace Chip8Console.CPU
 
         public void Start()
         {
+            Reset();
+            LoadFont();
+            LoadOpCodes();
+
+            lastTime = new TimeSpan(DateTime.Now.Ticks);
+        }
+
+        private void LoadOpCodes()
+        {
+            decoder = new GeneralDecoder(this, new OpCode(0xF000),
+                            CreateSubroutineDecoder(),
+                            CreateRegisterOperationsDecoder(),
+                            CreateMemDecoder(),
+                            CreateKeyInputDecoder(),
+                            OpCodeDecoder.CreateDecoderFor(new OpCode1NNN(this), this),
+                            OpCodeDecoder.CreateDecoderFor(new OpCode2NNN(this), this),
+                            OpCodeDecoder.CreateDecoderFor(new OpCode3XNN(this), this),
+                            OpCodeDecoder.CreateDecoderFor(new OpCode4XNN(this), this),
+                            OpCodeDecoder.CreateDecoderFor(new OpCode5XY0(this), this),
+                            OpCodeDecoder.CreateDecoderFor(new OpCode6XNN(this), this),
+                            OpCodeDecoder.CreateDecoderFor(new OpCode7XNN(this), this),
+                            OpCodeDecoder.CreateDecoderFor(new OpCode9XY0(this), this),
+                            OpCodeDecoder.CreateDecoderFor(new OpCodeANNN(this), this),
+                            OpCodeDecoder.CreateDecoderFor(new OpCodeBNNN(this), this),
+                            OpCodeDecoder.CreateDecoderFor(new OpCodeCXNN(this), this),
+                            OpCodeDecoder.CreateDecoderFor(new OpCodeDXYN(this), this)
+                        );
+        }
+
+        private void Reset()
+        {
             ProgramCounter = 0x200;
             RegisterI = 0;
-            SoundTimer = 0x0;
-            DelayTimer = 0x0;
-            StackPointer = 0x0;
+            SoundTimer = 0;
+            DelayTimer = 0;
+            StackPointer = 0;
 
             for (var i = 0; i < Registers.Length; i++)
             {
@@ -56,63 +88,42 @@ namespace Chip8Console.CPU
             }
 
             Memory.Flush();
+        }
 
-            // load fontset
+        private void LoadFont()
+        {
             for (byte i = 0; i < chip8Fontset.Length; i++)
             {
                 memory.Store(i, chip8Fontset[i]);
             }
-
-            // load opcode decoders
-            decoder = new GeneralDecoder(this, new OpCode(0xF000),
-                CreateSubroutineDecoder(),
-                CreateRegisterOperationsDecoder(),
-                CreateMemDecoder(),
-                CreateKeyInputDecoder(),
-                OpCodeDecoder.CreateDecoderFor(new OpCode1NNN(this), this),
-                OpCodeDecoder.CreateDecoderFor(new OpCode2NNN(this), this),
-                OpCodeDecoder.CreateDecoderFor(new OpCode3XNN(this), this),
-                OpCodeDecoder.CreateDecoderFor(new OpCode4XNN(this), this),
-                OpCodeDecoder.CreateDecoderFor(new OpCode5XY0(this), this),
-                OpCodeDecoder.CreateDecoderFor(new OpCode6XNN(this), this),
-                OpCodeDecoder.CreateDecoderFor(new OpCode7XNN(this), this),
-                OpCodeDecoder.CreateDecoderFor(new OpCode9XY0(this), this),
-                OpCodeDecoder.CreateDecoderFor(new OpCodeANNN(this), this),
-                OpCodeDecoder.CreateDecoderFor(new OpCodeBNNN(this), this),
-                OpCodeDecoder.CreateDecoderFor(new OpCodeCXNN(this), this),
-                OpCodeDecoder.CreateDecoderFor(new OpCodeDXYN(this), this)
-            );
-
-            lastTime = new TimeSpan(DateTime.Now.Ticks);
         }
 
         public void Load(byte[] program)
         {
-            for (int i = 0; i < program.Length; ++i)
+            for (int i = 0; i < program.Length; i++)
                 Memory.Store((ushort)(i + 512), program[i]);
         }
 
         public void Tick()
         {
-            // Fetch opcode
             var opcode = GetOpcode();
-            // go to next instruction
             ProgramCounter += 2;
-            // Decode opcode
             var executer = decoder.Decode(opcode);
-            // Execute opcode
             executer.Execute(opcode);
 
             var now = new TimeSpan(DateTime.Now.Ticks);
             var dt = now - lastTime;
             lastTime = now;
             accumulator += dt;
-
             while (accumulator >= _60Hz)
             {
                 UpdateTimers();
                 accumulator -= _60Hz;
             }
+#if DEBUG
+            ticksCount++;
+            Console.WriteLine($" {ticksCount} OpCode: {opcode} {executer}");
+#endif
         }
 
         private void UpdateTimers()
@@ -124,7 +135,7 @@ namespace Chip8Console.CPU
             {
                 if (SoundTimer == 1)
                 {
-                    Console.WriteLine("BEEP!");
+                    // Console.Beep();
                 }
                 --SoundTimer;
             }
@@ -175,8 +186,7 @@ namespace Chip8Console.CPU
             return new OpCodeDecoder(new OpCode(0x0000), this)
             {
                 new OpCode00EE(this),
-                new OpCode00E0(this),
-                new OpCode0NNN(this),
+                new OpCode00E0(this)
             };
         }
         private OpCodeDecoder CreateKeyInputDecoder()

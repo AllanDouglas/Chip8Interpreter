@@ -55,12 +55,12 @@ namespace Chip8Console.Keyboard
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         private static extern short GetKeyState(int keyCode);
-        public static bool IsKeyDown(Keys key)
+        private static bool IsKeyDown(Keys key)
         {
-            return Convert.ToBoolean(GetKeyState((int)key) & (KEY_KEYDOWN | KEY_PRESSED));
+            return Convert.ToBoolean(GetKeyState((int)key) & (KEY_KEYDOWN));
         }
 
-        public static bool IsKeyUp(Keys key)
+        private static bool IsKeyUp(Keys key)
         {
             return (GetKeyState((int)key) & KEY_UP) == KEY_UP;
         }
@@ -70,7 +70,7 @@ namespace Chip8Console.Keyboard
             foreach (var bind in binds)
             {
                 KeyBinds[bind.Value] = IsKeyDown(bind.Key) ? 1 : 0;
-                
+
                 if (KeyBinds[bind.Value] > 0)
                 {
                     LastPressedKey = bind.Value;

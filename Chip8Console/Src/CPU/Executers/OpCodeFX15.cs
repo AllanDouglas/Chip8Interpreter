@@ -12,7 +12,7 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-            cpu.DelayTimer = cpu.GetFromRegister(opcode.X);
+            cpu.DelayTimer = cpu.Registers[opcode.X];
         }
     }
 }
