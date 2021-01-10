@@ -17,7 +17,8 @@ namespace Chip8Console.CPU
             var height = opcode.Constant4;
             cpu.DrawFlag = true;
 
-            cpu.StoreIntoRegister(0xF, 0);
+            cpu.Registers[0xf] = 0;
+            var gpuLength = cpu.Gpu.Columns * cpu.Gpu.Rows;
 
             for (int line = 0; line < height; line++)
             {
@@ -30,9 +31,15 @@ namespace Chip8Console.CPU
                     var x = posX + column;
                     var y = posY + line;
 
+                    if (x > cpu.Gpu.Columns)
+                        x %= cpu.Gpu.Columns;
+
+                    if (y > cpu.Gpu.Rows)
+                        x %= cpu.Gpu.Rows;
+
                     var index = (ushort)(x + (y * cpu.Gpu.Columns));
 
-                    if (index > cpu.Gpu.Columns * cpu.Gpu.Rows) continue;
+                    if (index >= gpuLength) continue;
 
                     var currentPixel = cpu.Gpu.Read(index);
 
