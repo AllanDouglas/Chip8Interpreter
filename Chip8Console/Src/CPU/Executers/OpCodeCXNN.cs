@@ -14,8 +14,8 @@ namespace Chip8Console.CPU
 
         public override void Execute(OpCode opcode)
         {
-            var rand = new Random().Next(0, 255) & opcode.Constant8;
-            cpu.StoreIntoRegister(opcode.X, (byte)rand);
+            var rand = new Random().Next(0, 255);
+            cpu.Registers[opcode.X] = (byte)(rand & opcode.Constant8);
         }
     }
 }
