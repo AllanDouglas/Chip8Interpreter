@@ -13,6 +13,7 @@ namespace Chip8Console.Video
         private readonly Bitmap screen;
         private readonly PictureBox pictureBox;
         private bool isLocked;
+        private bool active;
 
         public WindowsVideo(IGPU gpu)
         {
@@ -46,10 +47,15 @@ namespace Chip8Console.Video
 
             pictureBox.Image = screen;
 
+            Shown  += (_, _) => active = true;
         }
+
+
 
         public void Draw()
         {
+            if(active == false) return;
+
             isLocked = true;
             var bits = screen.LockBits(new Rectangle(0, 0, screen.Width, screen.Height),
                 ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
@@ -64,10 +70,9 @@ namespace Chip8Console.Video
                     {
                         var index = x + (y * gpu.Columns);
                         pointer[0] = 0; // Blue
-                        pointer[1] = gpu.Read((ushort)index) > 0 ? (byte)0x64 : (byte)0; // Green
+                        pointer[1] = gpu.Read((ushort)index) > 0 ? 0x64 : 0; // Green
                         pointer[2] = 0; // Red
                         pointer[3] = 255; // Alpha
-
                         pointer += 4; // 4 bytes per pixel
                     }
                 }
@@ -76,7 +81,7 @@ namespace Chip8Console.Video
             screen.UnlockBits(bits);
             isLocked = false;
             Invoke((Action)pictureBox.Refresh);
-            
+
         }
 
         private class MyBox : PictureBox
