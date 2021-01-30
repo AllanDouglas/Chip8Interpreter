@@ -18,7 +18,7 @@ namespace Chip8Console.Video
         public WindowsVideo(IGPU gpu)
         {
             this.gpu = gpu;
-            screen = new Bitmap(64, 32);
+            screen = new Bitmap(gpu.Columns, gpu.Rows);
 
             pictureBox = new MyBox(this)
             {

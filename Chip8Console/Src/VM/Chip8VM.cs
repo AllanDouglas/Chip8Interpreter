@@ -32,9 +32,9 @@ namespace Chip8Console.VM
             Application.Run(video);
         }
 
-        private static void RunCPU(Chip8CPU cpu, WindowsVideo video, TimeSpan cpuClock)
+        private static void RunCPU(Chip8CPU cpu, IDisplay video, TimeSpan cpuClock)
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 var lastUpdate = DateTime.Now;
                 var accumulator = 0d;
@@ -56,6 +56,7 @@ namespace Chip8Console.VM
                         cpu.Keyboard.Update();
                         accumulator -= cpuClock.TotalSeconds;
                     }
+                    await Task.Delay(1);
                 }
             });
         }
